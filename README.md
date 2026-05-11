@@ -1,35 +1,40 @@
 # Gift Selection Catalog
 
-Сервіс підбору подарунків з каталогом, фільтрацією за тегами/подіями та особистим кабінетом.
+Бекенд для сервісу підбору подарунків. Фільтрація за ціною, віком, тегами та подіями. JWT-авторизація, особистий кабінет, адмін-панель.
 
-## Запуск
+## Як запустити
 
 ```bash
-# 1. Підняти PostgreSQL
 docker compose -f backend/compose.yaml up -d
-
-# 2. Запустити бекенд
 cd backend
 ./mvnw spring-boot:run
 ```
 
-Swagger UI: [http://localhost:8080/api/swagger-ui.html](http://localhost:8080/api/swagger-ui.html)
+Swagger: http://localhost:8080/api/swagger-ui.html
 
-## API
+## Ролі
 
-| Метод | Endpoint | Доступ | Опис |
-|-------|----------|--------|------|
-| POST | `/api/auth/register` | public | Реєстрація |
-| POST | `/api/auth/login` | public | Логін |
-| GET | `/api/profile` | JWT | Профіль користувача |
-| PUT | `/api/profile` | JWT | Оновити ПІБ |
-| GET | `/api/gifts` | public | Пошук/фільтрація подарунків |
-| GET | `/api/gifts/{id}` | public | Подарунок за ID |
-| POST | `/api/admin/gifts` | JWT | Створити подарунок |
-| PUT | `/api/admin/gifts/{id}` | JWT | Оновити подарунок |
-| DELETE | `/api/admin/gifts/{id}` | JWT | Видалити подарунок |
+- `USER` — створюється при реєстрації, може переглядати каталог і редагувати свій профіль
+- `ADMIN` — має доступ до CRUD подарунків через `/admin/gifts`
 
-## ER-діаграма
+
+## Ендпоінти
+
+| Метод | URL | Хто має доступ |
+|-------|-----|----------------|
+| POST | `/api/auth/register` | всі |
+| POST | `/api/auth/login` | всі |
+| GET | `/api/profile` | авторизований |
+| PUT | `/api/profile` | авторизований |
+| GET | `/api/gifts` | всі |
+| GET | `/api/gifts/{id}` | всі |
+| POST | `/api/admin/gifts` | ADMIN |
+| PUT | `/api/admin/gifts/{id}` | ADMIN |
+| DELETE | `/api/admin/gifts/{id}` | ADMIN |
+
+Фільтри для `GET /api/gifts`: `q`, `priceMinCents`, `priceMaxCents`, `age`, `tags`
+
+## Схема БД
 
 ```mermaid
 erDiagram
@@ -38,6 +43,7 @@ erDiagram
         varchar full_name
         varchar email UK
         varchar password_hash
+        varchar role
         timestamptz created_at
     }
 
@@ -45,9 +51,11 @@ erDiagram
         bigserial id PK
         varchar name
         text description
-        integer price_cents
+        int price_cents
         text photo_url
-        integer stock_quantity
+        int stock_quantity
+        int min_age
+        int max_age
     }
 
     tags {
@@ -61,25 +69,12 @@ erDiagram
         date event_date
     }
 
-    gifts_tags {
-        bigint gift_id FK
-        bigint tag_id FK
-    }
-
-    gifts_events {
-        bigint gift_id FK
-        bigint event_id FK
-    }
-
-    gifts ||--o{ gifts_tags : "has"
-    tags ||--o{ gifts_tags : "tagged in"
-    gifts ||--o{ gifts_events : "suitable for"
-    events ||--o{ gifts_events : "includes"
+    gifts ||--o{ gifts_tags : ""
+    tags ||--o{ gifts_tags : ""
+    gifts ||--o{ gifts_events : ""
+    events ||--o{ gifts_events : ""
 ```
 
-## Технології
+## Стек
 
-- Java 17, Spring Boot 4, Spring Security (JWT), Spring Data JPA
-- PostgreSQL, Flyway (міграції)
-- MapStruct (маппінг), Lombok
-- Springdoc OpenAPI (Swagger UI)
+Java 17, Spring Boot 4, Spring Security (JWT), Spring Data JPA, PostgreSQL, Flyway, MapStruct, Lombok, Springdoc OpenAPI
