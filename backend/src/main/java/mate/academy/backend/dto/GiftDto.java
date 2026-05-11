@@ -9,6 +9,8 @@ public record GiftDto(
         int priceCents,
         String photoUrl,
         int stockQuantity,
+        Integer minAge,
+        Integer maxAge,
         Set<String> tags
 ) {
 }

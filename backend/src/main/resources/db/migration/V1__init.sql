@@ -16,7 +16,9 @@ create table gifts
     description    text,
     price_cents    integer      not null,
     photo_url      text,
-    stock_quantity integer      not null default 0
+    stock_quantity integer      not null default 0,
+    min_age        integer,
+    max_age        integer
 );
 
 create index idx_gifts_name on gifts (name);

@@ -1,9 +1,9 @@
 package mate.academy.backend.auth;
 
 import jakarta.validation.Valid;
-import mate.academy.backend.auth.dto.AuthLoginRequest;
-import mate.academy.backend.auth.dto.AuthRegisterRequest;
-import mate.academy.backend.auth.dto.AuthResponse;
+import mate.academy.backend.dto.Authdto.AuthLoginRequest;
+import mate.academy.backend.dto.Authdto.AuthRegisterRequest;
+import mate.academy.backend.dto.Authdto.AuthResponse;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;

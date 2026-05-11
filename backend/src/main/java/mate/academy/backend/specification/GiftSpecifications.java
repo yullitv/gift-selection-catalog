@@ -30,6 +30,16 @@ public class GiftSpecifications {
         return (root, query, cb) -> cb.lessThanOrEqualTo(root.get("priceCents"), priceMaxCents);
     }
 
+    public static Specification<Gift> fitsAge(Integer age) {
+        if (age == null) {
+            return null;
+        }
+        return (root, query, cb) -> cb.and(
+                cb.or(cb.isNull(root.get("minAge")), cb.lessThanOrEqualTo(root.get("minAge"), age)),
+                cb.or(cb.isNull(root.get("maxAge")), cb.greaterThanOrEqualTo(root.get("maxAge"), age))
+        );
+    }
+
     public static Specification<Gift> hasAnyTags(Collection<String> tags) {
         if (tags == null || tags.isEmpty()) {
             return null;

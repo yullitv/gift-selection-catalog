@@ -14,15 +14,15 @@ public class UserPrincipal implements UserDetails {
     private final String passwordHash;
     private final List<GrantedAuthority> authorities;
 
-    public UserPrincipal(Long id, String email, String passwordHash) {
+    public UserPrincipal(Long id, String email, String passwordHash, String role) {
         this.id = id;
         this.email = email;
         this.passwordHash = passwordHash;
-        this.authorities = List.of(new SimpleGrantedAuthority("ROLE_USER"));
+        this.authorities = List.of(new SimpleGrantedAuthority("ROLE_" + role));
     }
 
     public static UserPrincipal from(User user) {
-        return new UserPrincipal(user.getId(), user.getEmail(), user.getPasswordHash());
+        return new UserPrincipal(user.getId(), user.getEmail(), user.getPasswordHash(), user.getRole().name());
     }
 
     public Long getId() {

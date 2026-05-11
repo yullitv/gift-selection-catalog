@@ -39,6 +39,12 @@ public class Gift {
     @Column(name = "stock_quantity", nullable = false)
     private int stockQuantity;
 
+    @Column(name = "min_age")
+    private Integer minAge;
+
+    @Column(name = "max_age")
+    private Integer maxAge;
+
     @ManyToMany
     @JoinTable(
             name = "gifts_tags",

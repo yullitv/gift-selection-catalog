@@ -10,6 +10,8 @@ public record GiftUpsertRequest(
         @Min(0) int priceCents,
         String photoUrl,
         @Min(0) int stockQuantity,
+        @Min(0) Integer minAge,
+        @Min(0) Integer maxAge,
         Set<@NotBlank String> tags
 ) {
 }

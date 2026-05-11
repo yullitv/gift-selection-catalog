@@ -1,4 +1,4 @@
-package mate.academy.backend.auth.dto;
+package mate.academy.backend.dto.Authdto;
 
 import mate.academy.backend.security.CurrentUser;
 

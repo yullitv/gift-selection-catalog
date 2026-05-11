@@ -21,41 +21,60 @@ import org.springframework.transaction.annotation.Transactional;
 public class GiftService {
     private final GiftRepository giftRepository;
     private final TagRepository tagRepository;
+    private final GiftMapper giftMapper;
 
-    public GiftService(GiftRepository giftRepository, TagRepository tagRepository) {
+    public GiftService(GiftRepository giftRepository, TagRepository tagRepository, GiftMapper giftMapper) {
         this.giftRepository = giftRepository;
         this.tagRepository = tagRepository;
+        this.giftMapper = giftMapper;
     }
 
     @Transactional(readOnly = true)
-    public List<GiftDto> search(String q, Integer priceMinCents, Integer priceMaxCents, Set<String> tags) {
-        Specification<Gift> spec = Specification.where(GiftSpecifications.nameLike(q))
-                .and(GiftSpecifications.priceGte(priceMinCents))
-                .and(GiftSpecifications.priceLte(priceMaxCents))
-                .and(GiftSpecifications.hasAnyTags(normalizeTags(tags)));
+    public List<GiftDto> search(String q, Integer priceMinCents, Integer priceMaxCents, Integer age, Set<String> tags) {
+        Specification<Gift> spec = (root, query, cb) -> cb.conjunction();
 
-        return giftRepository.findAll(spec).stream().map(GiftMapper::toDto).toList();
+        if (q != null && !q.isBlank()) {
+            spec = spec.and(GiftSpecifications.nameLike(q));
+        }
+        if (priceMinCents != null) {
+            spec = spec.and(GiftSpecifications.priceGte(priceMinCents));
+        }
+        if (priceMaxCents != null) {
+            spec = spec.and(GiftSpecifications.priceLte(priceMaxCents));
+        }
+        if (age != null) {
+            spec = spec.and(GiftSpecifications.fitsAge(age));
+        }
+        Set<String> normalizedTags = normalizeTags(tags);
+        if (!normalizedTags.isEmpty()) {
+            spec = spec.and(GiftSpecifications.hasAnyTags(normalizedTags));
+        }
+
+        return giftRepository.findAll(spec).stream()
+                .map(giftMapper::toDto)
+                .toList();
     }
 
     @Transactional(readOnly = true)
     public GiftDto getById(Long id) {
         Gift g = giftRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Gift not found"));
-        return GiftMapper.toDto(g);
+        return giftMapper.toDto(g);
     }
 
     @Transactional
     public GiftDto create(GiftUpsertRequest req) {
-        Gift g = new Gift();
-        apply(g, req);
+        Gift g = giftMapper.toEntity(req);
+        resolveTags(g, req.tags());
         giftRepository.save(g);
-        return GiftMapper.toDto(g);
+        return giftMapper.toDto(g);
     }
 
     @Transactional
     public GiftDto update(Long id, GiftUpsertRequest req) {
         Gift g = giftRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Gift not found"));
-        apply(g, req);
-        return GiftMapper.toDto(g);
+        giftMapper.updateEntity(req, g);
+        resolveTags(g, req.tags());
+        return giftMapper.toDto(g);
     }
 
     @Transactional
@@ -63,24 +82,18 @@ public class GiftService {
         giftRepository.deleteById(id);
     }
 
-    private void apply(Gift g, GiftUpsertRequest req) {
-        g.setName(req.name());
-        g.setDescription(req.description());
-        g.setPriceCents(req.priceCents());
-        g.setPhotoUrl(req.photoUrl());
-        g.setStockQuantity(req.stockQuantity());
-
-        Set<Tag> newTags = new LinkedHashSet<>();
-        for (String tagName : normalizeTags(req.tags())) {
+    private void resolveTags(Gift g, Set<String> tagNames) {
+        Set<Tag> resolved = new LinkedHashSet<>();
+        for (String tagName : normalizeTags(tagNames)) {
             Tag tag = tagRepository.findByName(tagName)
                     .orElseGet(() -> {
                         Tag t = new Tag();
                         t.setName(tagName);
                         return tagRepository.save(t);
                     });
-            newTags.add(tag);
+            resolved.add(tag);
         }
-        g.setTags(newTags);
+        g.setTags(resolved);
     }
 
     private Set<String> normalizeTags(Set<String> tags) {

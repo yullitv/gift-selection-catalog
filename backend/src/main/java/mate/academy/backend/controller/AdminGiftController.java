@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/admin/gifts")
-@PreAuthorize("isAuthenticated()")
+@PreAuthorize("hasRole('ADMIN')")
 public class AdminGiftController {
     private final GiftService giftService;
 

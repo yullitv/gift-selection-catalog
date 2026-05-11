@@ -1,13 +1,14 @@
 package mate.academy.backend.auth;
 
 import java.time.Instant;
-import mate.academy.backend.auth.dto.AuthLoginRequest;
-import mate.academy.backend.auth.dto.AuthRegisterRequest;
-import mate.academy.backend.auth.dto.AuthResponse;
+import mate.academy.backend.dto.Authdto.AuthLoginRequest;
+import mate.academy.backend.dto.Authdto.AuthRegisterRequest;
+import mate.academy.backend.dto.Authdto.AuthResponse;
 import mate.academy.backend.dao.UserRepository;
 import mate.academy.backend.security.AppSecurityProperties;
 import mate.academy.backend.security.CurrentUser;
 import mate.academy.backend.security.UserPrincipal;
+import mate.academy.backend.model.Role;
 import mate.academy.backend.model.User;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -52,6 +53,7 @@ public class AuthService {
         u.setFullName(req.firstName().trim() + " " + req.lastName().trim());
         u.setEmail(req.email().toLowerCase());
         u.setPasswordHash(passwordEncoder.encode(req.password()));
+        u.setRole(Role.USER);
         u.setCreatedAt(Instant.now());
         userRepository.save(u);
 
@@ -79,6 +81,7 @@ public class AuthService {
                 .expiresAt(now.plus(props.accessTokenTtl()))
                 .subject(String.valueOf(u.getId()))
                 .claim("email", u.getEmail())
+                .claim("role", u.getRole().name())
                 .build();
         return jwtEncoder.encode(JwtEncoderParameters.from(header, claims)).getTokenValue();
     }
