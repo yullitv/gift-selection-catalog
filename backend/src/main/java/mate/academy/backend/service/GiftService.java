@@ -4,13 +4,13 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.UUID;
 import mate.academy.backend.dao.GiftRepository;
 import mate.academy.backend.dao.TagRepository;
 import mate.academy.backend.dto.GiftDto;
 import mate.academy.backend.dto.GiftUpsertRequest;
 import mate.academy.backend.mapper.GiftMapper;
 import mate.academy.backend.model.Gift;
+import mate.academy.backend.model.GiftAudience;
 import mate.academy.backend.model.Tag;
 import mate.academy.backend.specification.GiftSpecifications;
 import org.springframework.data.jpa.domain.Specification;
@@ -30,7 +30,14 @@ public class GiftService {
     }
 
     @Transactional(readOnly = true)
-    public List<GiftDto> search(String q, Integer priceMinCents, Integer priceMaxCents, Integer age, Set<String> tags) {
+    public List<GiftDto> search(
+            String q,
+            Integer priceMinCents,
+            Integer priceMaxCents,
+            Integer age,
+            Set<GiftAudience> targetAudience,
+            Set<String> tags
+    ) {
         Specification<Gift> spec = (root, query, cb) -> cb.conjunction();
 
         if (q != null && !q.isBlank()) {
@@ -44,6 +51,9 @@ public class GiftService {
         }
         if (age != null) {
             spec = spec.and(GiftSpecifications.fitsAge(age));
+        }
+        if (targetAudience != null && !targetAudience.isEmpty()) {
+            spec = spec.and(GiftSpecifications.hasAnyTargetAudience(targetAudience));
         }
         Set<String> normalizedTags = normalizeTags(tags);
         if (!normalizedTags.isEmpty()) {
@@ -64,6 +74,7 @@ public class GiftService {
     @Transactional
     public GiftDto create(GiftUpsertRequest req) {
         Gift g = giftMapper.toEntity(req);
+        g.setTargetAudiences(new LinkedHashSet<>(req.targetAudiences()));
         resolveTags(g, req.tags());
         giftRepository.save(g);
         return giftMapper.toDto(g);
@@ -73,6 +84,7 @@ public class GiftService {
     public GiftDto update(Long id, GiftUpsertRequest req) {
         Gift g = giftRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Gift not found"));
         giftMapper.updateEntity(req, g);
+        g.setTargetAudiences(new LinkedHashSet<>(req.targetAudiences()));
         resolveTags(g, req.tags());
         return giftMapper.toDto(g);
     }

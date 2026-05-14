@@ -1,7 +1,12 @@
 package mate.academy.backend.model;
 
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -11,7 +16,6 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import java.util.LinkedHashSet;
 import java.util.Set;
-import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -44,6 +48,12 @@ public class Gift {
 
     @Column(name = "max_age")
     private Integer maxAge;
+
+    @ElementCollection(fetch = FetchType.LAZY)
+    @CollectionTable(name = "gift_target_audiences", joinColumns = @JoinColumn(name = "gift_id"))
+    @Column(name = "audience", nullable = false, length = 32)
+    @Enumerated(EnumType.STRING)
+    private Set<GiftAudience> targetAudiences = new LinkedHashSet<>();
 
     @ManyToMany
     @JoinTable(
