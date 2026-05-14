@@ -2,6 +2,7 @@ package mate.academy.backend.specification;
 
 import java.util.Collection;
 import mate.academy.backend.model.Gift;
+import mate.academy.backend.model.GiftAudience;
 import org.springframework.data.jpa.domain.Specification;
 
 public class GiftSpecifications {
@@ -38,6 +39,17 @@ public class GiftSpecifications {
                 cb.or(cb.isNull(root.get("minAge")), cb.lessThanOrEqualTo(root.get("minAge"), age)),
                 cb.or(cb.isNull(root.get("maxAge")), cb.greaterThanOrEqualTo(root.get("maxAge"), age))
         );
+    }
+
+    public static Specification<Gift> hasAnyTargetAudience(Collection<GiftAudience> audiences) {
+        if (audiences == null || audiences.isEmpty()) {
+            return null;
+        }
+        return (root, query, cb) -> {
+            query.distinct(true);
+            var join = root.join("targetAudiences");
+            return join.in(audiences);
+        };
     }
 
     public static Specification<Gift> hasAnyTags(Collection<String> tags) {

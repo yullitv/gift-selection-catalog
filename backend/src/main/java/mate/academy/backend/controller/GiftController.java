@@ -2,6 +2,7 @@ package mate.academy.backend.controller;
 
 import java.util.Set;
 import mate.academy.backend.dto.GiftDto;
+import mate.academy.backend.model.GiftAudience;
 import mate.academy.backend.service.GiftService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,9 +25,10 @@ public class GiftController {
             @RequestParam(required = false) Integer priceMinCents,
             @RequestParam(required = false) Integer priceMaxCents,
             @RequestParam(required = false) Integer age,
+            @RequestParam(required = false) Set<GiftAudience> targetAudience,
             @RequestParam(required = false) Set<String> tags
     ) {
-        return giftService.search(q, priceMinCents, priceMaxCents, age, tags);
+        return giftService.search(q, priceMinCents, priceMaxCents, age, targetAudience, tags);
     }
 
     @GetMapping("/{id}")

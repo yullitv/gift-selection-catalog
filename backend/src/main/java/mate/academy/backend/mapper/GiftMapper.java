@@ -20,11 +20,13 @@ public interface GiftMapper {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "tags", ignore = true)
     @Mapping(target = "events", ignore = true)
+    @Mapping(target = "targetAudiences", ignore = true)
     Gift toEntity(GiftUpsertRequest request);
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "tags", ignore = true)
     @Mapping(target = "events", ignore = true)
+    @Mapping(target = "targetAudiences", ignore = true)
     void updateEntity(GiftUpsertRequest request, @MappingTarget Gift gift);
 
     @Named("tagsToStrings")
