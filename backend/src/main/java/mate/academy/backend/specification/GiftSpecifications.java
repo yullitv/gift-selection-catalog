@@ -9,14 +9,23 @@ public class GiftSpecifications {
     private GiftSpecifications() {
     }
 
-    public static Specification<Gift> nameLike(String q) {
+    public static Specification<Gift> textSearch(String q) {
         return (root, query, cb) -> {
             if (q == null || q.isBlank()) {
                 return cb.conjunction();
             }
 
+            query.distinct(true);
+
             String like = "%" + q.trim().toLowerCase() + "%";
-            return cb.like(cb.lower(root.get("name")), like);
+
+            var tagsJoin = root.join("tags", jakarta.persistence.criteria.JoinType.LEFT);
+
+            return cb.or(
+                    cb.like(cb.lower(root.get("name")), like),
+                    cb.like(cb.lower(root.get("description")), like),
+                    cb.like(cb.lower(tagsJoin.get("name")), like)
+            );
         };
     }
 
@@ -81,5 +90,10 @@ public class GiftSpecifications {
             var join = root.join("tags");
             return join.get("name").in(tags);
         };
+    }
+
+    public static Specification<Gift> inStock() {
+        return (root, query, cb) ->
+                cb.greaterThan(root.get("stockQuantity"), 0);
     }
 }
