@@ -4,15 +4,20 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
-import java.util.UUID;
 import mate.academy.backend.dao.GiftRepository;
 import mate.academy.backend.dao.TagRepository;
 import mate.academy.backend.dto.GiftDto;
 import mate.academy.backend.dto.GiftUpsertRequest;
 import mate.academy.backend.mapper.GiftMapper;
 import mate.academy.backend.model.Gift;
+import mate.academy.backend.model.GiftAudience;
+import mate.academy.backend.model.GiftSort;
 import mate.academy.backend.model.Tag;
 import mate.academy.backend.specification.GiftSpecifications;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,29 +35,67 @@ public class GiftService {
     }
 
     @Transactional(readOnly = true)
-    public List<GiftDto> search(String q, Integer priceMinCents, Integer priceMaxCents, Integer age, Set<String> tags) {
+    public Page<GiftDto> search(
+            String q,
+            Integer priceMinCents,
+            Integer priceMaxCents,
+            Integer age,
+            Set<GiftAudience> targetAudience,
+            Set<String> tags,
+            Boolean inStock,
+            GiftSort sort,
+            int page,
+            int size
+    ) {
         Specification<Gift> spec = (root, query, cb) -> cb.conjunction();
 
         if (q != null && !q.isBlank()) {
-            spec = spec.and(GiftSpecifications.nameLike(q));
+            spec = spec.and(GiftSpecifications.textSearch(q));
         }
+
         if (priceMinCents != null) {
             spec = spec.and(GiftSpecifications.priceGte(priceMinCents));
         }
+
         if (priceMaxCents != null) {
             spec = spec.and(GiftSpecifications.priceLte(priceMaxCents));
         }
+
         if (age != null) {
             spec = spec.and(GiftSpecifications.fitsAge(age));
         }
+
+        if (targetAudience != null && !targetAudience.isEmpty()) {
+            spec = spec.and(GiftSpecifications.hasAnyTargetAudience(targetAudience));
+        }
+
         Set<String> normalizedTags = normalizeTags(tags);
         if (!normalizedTags.isEmpty()) {
             spec = spec.and(GiftSpecifications.hasAnyTags(normalizedTags));
         }
 
-        return giftRepository.findAll(spec).stream()
-                .map(giftMapper::toDto)
-                .toList();
+        if (Boolean.TRUE.equals(inStock)) {
+            spec = spec.and(GiftSpecifications.inStock());
+        }
+
+        Pageable pageable = PageRequest.of(
+                Math.max(page, 0),
+                Math.min(Math.max(size, 1), 24),
+                resolveSort(sort)
+        );
+
+        return giftRepository.findAll(spec, pageable)
+                .map(giftMapper::toDto);
+    }
+
+    private Sort resolveSort(GiftSort sort) {
+        return switch (sort) {
+            case PRICE_ASC -> Sort.by(Sort.Direction.ASC, "priceCents");
+
+            case PRICE_DESC -> Sort.by(Sort.Direction.DESC, "priceCents");
+
+            case NEWEST -> Sort.by(Sort.Direction.DESC, "id");
+        };
     }
 
     @Transactional(readOnly = true)
@@ -64,6 +107,7 @@ public class GiftService {
     @Transactional
     public GiftDto create(GiftUpsertRequest req) {
         Gift g = giftMapper.toEntity(req);
+        g.setTargetAudiences(new LinkedHashSet<>(req.targetAudiences()));
         resolveTags(g, req.tags());
         giftRepository.save(g);
         return giftMapper.toDto(g);
@@ -73,6 +117,7 @@ public class GiftService {
     public GiftDto update(Long id, GiftUpsertRequest req) {
         Gift g = giftRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Gift not found"));
         giftMapper.updateEntity(req, g);
+        g.setTargetAudiences(new LinkedHashSet<>(req.targetAudiences()));
         resolveTags(g, req.tags());
         return giftMapper.toDto(g);
     }
