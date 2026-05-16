@@ -1,0 +1,36 @@
+services:
+  - type: web
+    name: gift-selection-catalog-backend
+    env: java
+    plan: free
+    buildCommand: cd backend && chmod +x mvnw && ./mvnw clean package -DskipTests
+    startCommand: cd backend && java -jar target/backend-0.0.1-SNAPSHOT.jar
+    envVars:
+      - key: DOCKER_COMPOSE_ENABLED
+        value: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: DATABASE_HOST
+        fromDatabase:
+          name: gift-selection-catalog-db
+          property: host
+      - key: DATABASE_PORT
+        fromDatabase:
+          name: gift-selection-catalog-db
+          property: port
+      - key: DATABASE_NAME
+        fromDatabase:
+          name: gift-selection-catalog-db
+          property: database
+      - key: DATABASE_USERNAME
+        fromDatabase:
+          name: gift-selection-catalog-db
+          property: user
+      - key: DATABASE_PASSWORD
+        fromDatabase:
+          name: gift-selection-catalog-db
+          property: password
+
+databases:
+  - name: gift-selection-catalog-db
+    plan: free
