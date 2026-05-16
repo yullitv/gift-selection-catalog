@@ -10,10 +10,26 @@ services:
         value: false
       - key: JWT_SECRET
         generateValue: true
-      - key: DATABASE_URL
+      - key: DATABASE_HOST
         fromDatabase:
           name: gift-selection-catalog-db
-          property: connectionString
+          property: host
+      - key: DATABASE_PORT
+        fromDatabase:
+          name: gift-selection-catalog-db
+          property: port
+      - key: DATABASE_NAME
+        fromDatabase:
+          name: gift-selection-catalog-db
+          property: database
+      - key: DATABASE_USERNAME
+        fromDatabase:
+          name: gift-selection-catalog-db
+          property: user
+      - key: DATABASE_PASSWORD
+        fromDatabase:
+          name: gift-selection-catalog-db
+          property: password
 
 databases:
   - name: gift-selection-catalog-db
