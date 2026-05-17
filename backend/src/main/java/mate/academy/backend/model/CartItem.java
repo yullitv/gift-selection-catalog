@@ -1,14 +1,6 @@
 package mate.academy.backend.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import java.time.Instant;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,8 +8,17 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "cart_items")
+@Table(
+        name = "cart_items",
+        uniqueConstraints = {
+                @UniqueConstraint(
+                        name = "uq_cart_items_user_gift",
+                        columnNames = {"user_id", "gift_id"}
+                )
+        }
+)
 public class CartItem {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -31,11 +32,23 @@ public class CartItem {
     private Gift gift;
 
     @Column(nullable = false)
-    private int quantity;
+    private Integer quantity;
 
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
     @Column(name = "updated_at", nullable = false)
     private Instant updatedAt;
+
+    @PrePersist
+    public void prePersist() {
+        Instant now = Instant.now();
+        createdAt = now;
+        updatedAt = now;
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        updatedAt = Instant.now();
+    }
 }
