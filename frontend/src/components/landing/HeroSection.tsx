@@ -25,8 +25,11 @@ export default function HeroSection() {
         <div className="max-w-xl space-y-6">
           <div className="space-y-4">
             <h1 className="text-3xl font-bold leading-tight tracking-tight text-white md:text-4xl lg:text-5xl">
-              Forget the stress of choosing. Find the gift they&apos;ll
-              <span className="text-brand-gold">actually remember.</span>
+              Forget the stress of choosing.{" "}
+              <span className="whitespace-nowrap">
+                Find the gift they&apos;ll
+              </span>
+              <span className="block text-brand-gold">actually remember.</span>
             </h1>
             <p className="max-w-lg text-base leading-relaxed text-white/90 md:text-lg">
               A curated catalog of gifts in Ukraine. From &quot;I have no
