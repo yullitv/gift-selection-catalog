@@ -1,5 +1,9 @@
 package mate.academy.backend.dto;
 
-public class UpdateCartItemQuantityRequest {
-    Integer quantity;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
+
+public record UpdateCartItemQuantityRequest(
+        @NotNull @Positive Integer quantity
+) {
 }

@@ -2,7 +2,7 @@ create table cart_items
 (
     id         bigserial primary key,
     user_id    bigint                   not null references users (id) on delete cascade,
-    gift_id    bigint                   not null references gifts (id),
+    gift_id    bigint                   not null references gifts (id) on delete cascade,
     quantity   integer                  not null,
     created_at timestamp with time zone not null default now(),
     updated_at timestamp with time zone not null default now(),
