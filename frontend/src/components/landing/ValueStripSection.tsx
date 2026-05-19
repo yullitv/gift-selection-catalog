@@ -32,17 +32,14 @@ export default function ValueStripSection() {
   return (
     <section className="relative flex min-h-below-header flex-col overflow-hidden border-y border-border/40">
       <img
-        src="/images/home/whyUs/why-us-background-giveheart.jpg"
+        src="/images/home/backgrounds/why-us-background-giveheart.jpg"
         alt=""
         loading="lazy"
         decoding="async"
         className="absolute inset-0 h-full w-full object-cover"
         aria-hidden
       />
-      <div
-        className="absolute inset-0 bg-white/25"
-        aria-hidden
-      />
+      <div className="absolute inset-0 bg-white/25" aria-hidden />
 
       <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 flex-col items-center justify-center px-4 py-10 md:py-12">
         <div className="grid w-full max-w-5xl grid-cols-1 gap-10 sm:grid-cols-3 sm:gap-6 lg:gap-8">

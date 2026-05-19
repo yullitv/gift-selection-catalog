@@ -33,7 +33,7 @@ export default function AboutSection() {
           <div className="w-full shrink-0 md:w-5/12 lg:w-1/2">
             <div className="overflow-hidden rounded-2xl shadow-lg ring-1 ring-black/5 md:rounded-3xl">
               <img
-                src="/images/home/about-us-sector-home-page-givheart.png"
+                src="/images/home/aboutUs/about-us-sector-home-page-givheart.png"
                 alt="Woman wrapping a gift at home"
                 loading="lazy"
                 decoding="async"

@@ -9,7 +9,7 @@ export default function HeroSection() {
     <section className="relative flex min-h-below-header flex-col overflow-hidden">
       {/* Background image */}
       <img
-        src="/images/home/main-home-page-hero-image-givheart.png"
+        src="/images/home/backgrounds/main-home-page-hero-image-givheart.png"
         alt="Person opening a beautifully wrapped gift box"
         loading="eager"
         fetchPriority="high"

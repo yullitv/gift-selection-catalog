@@ -59,7 +59,7 @@ export default function FeaturedGiftsSection() {
   return (
     <section className="relative flex min-h-below-header flex-col overflow-hidden border-y border-border/40">
       <img
-        src="/images/home/popular-products-block-giveheart.jpg"
+        src="/images/home/backgrounds/popular-products-block-giveheart.jpg"
         alt=""
         loading="lazy"
         decoding="async"
@@ -74,8 +74,8 @@ export default function FeaturedGiftsSection() {
             Top picks: What people are buying right now
           </h2>
           <p className="mt-2 text-sm text-muted-foreground md:text-base">
-            Real-time popular original gifts that solve the &quot;what to give&quot;
-            problem.
+            Real-time popular original gifts that solve the &quot;what to
+            give&quot; problem.
           </p>
         </div>
 
@@ -94,7 +94,9 @@ export default function FeaturedGiftsSection() {
         ) : null}
 
         {isEmpty ? (
-          <p className="text-center text-sm text-muted-foreground">No gifts yet.</p>
+          <p className="text-center text-sm text-muted-foreground">
+            No gifts yet.
+          </p>
         ) : null}
 
         {gifts && gifts.length > 0 ? (
