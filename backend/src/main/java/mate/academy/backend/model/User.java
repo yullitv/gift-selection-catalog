@@ -34,6 +34,9 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
+    @Column(length = 32)
+    private String phone;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 }
