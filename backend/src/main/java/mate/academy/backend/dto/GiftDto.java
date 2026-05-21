@@ -1,5 +1,6 @@
 package mate.academy.backend.dto;
 
+import java.util.List;
 import java.util.Set;
 import mate.academy.backend.model.GiftAudience;
 
@@ -9,6 +10,8 @@ public record GiftDto(
         String description,
         int priceCents,
         String photoUrl,
+        String primaryImageUrl,
+        List<String> imageUrls,
         int stockQuantity,
         Integer minAge,
         Integer maxAge,

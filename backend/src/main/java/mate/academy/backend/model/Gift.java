@@ -1,5 +1,6 @@
 package mate.academy.backend.model;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -13,8 +14,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import lombok.Getter;
 import lombok.Setter;
@@ -39,6 +44,10 @@ public class Gift {
 
     @Column(name = "photo_url", columnDefinition = "text")
     private String photoUrl;
+
+    @OneToMany(mappedBy = "gift", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OrderBy("sortOrder ASC")
+    private List<GiftImage> images = new ArrayList<>();
 
     @Column(name = "stock_quantity", nullable = false)
     private int stockQuantity;

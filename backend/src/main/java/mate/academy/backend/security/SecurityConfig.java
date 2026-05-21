@@ -77,7 +77,11 @@ public class SecurityConfig {
     @Bean
     SecretKey jwtSecretKey(AppSecurityProperties props) {
         // HS256; secret must be reasonably long (32+ bytes).
-        return new SecretKeySpec(props.secret().getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+        String secret = props.secret();
+        if (secret == null || secret.isBlank()) {
+            secret = "change-me-change-me-change-me-change-me";
+        }
+        return new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
     }
 
     @Bean
