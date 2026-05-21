@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Heart, ShoppingCart } from "lucide-react";
 
 import HeaderSearch from "@/components/layout/HeaderSearch";
@@ -7,6 +7,8 @@ import { useAuth } from "@/hooks/useAuth";
 
 export default function SiteHeader() {
   const { isAuthenticated, logout } = useAuth();
+  const { pathname } = useLocation();
+  const showHeaderSearch = pathname !== "/catalog";
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
@@ -29,9 +31,13 @@ export default function SiteHeader() {
           Catalog
         </Link>
 
-        <div className="min-w-0 flex-1">
-          <HeaderSearch />
-        </div>
+        {showHeaderSearch ? (
+          <div className="min-w-0 flex-1">
+            <HeaderSearch />
+          </div>
+        ) : (
+          <div className="min-w-0 flex-1" aria-hidden />
+        )}
 
         <div className="flex shrink-0 items-center gap-0.5">
           <Button

@@ -1,12 +1,16 @@
 export type GiftAudience = "MAN" | "WOMAN" | "COUPLE" | "CHILD";
 
-/** GiftDto from OpenAPI. */
+export type GiftSort = "PRICE_ASC" | "PRICE_DESC" | "NEWEST";
+
+/** GiftDto from backend. */
 export type GiftDto = {
   id: number;
   name: string;
   description: string;
   priceCents: number;
   photoUrl: string | null;
+  primaryImageUrl: string | null;
+  imageUrls: string[];
   stockQuantity: number;
   minAge: number | null;
   maxAge: number | null;
