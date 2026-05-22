@@ -7,14 +7,14 @@ export const FOOTER_COPY = {
   social: [
     {
       id: "facebook",
-      label: "GIVHEART on Facebook — coming soon",
-      href: "#",
+      label: "GIVHEART on Facebook",
+      href: "https://www.facebook.com/share/18o1X7dyBd/?mibextid=wwXIfr",
       iconSrc: "/images/home/footer/FB_logo.png",
     },
     {
       id: "instagram",
-      label: "GIVHEART on Instagram — coming soon",
-      href: "#",
+      label: "GIVHEART on Instagram",
+      href: "https://www.instagram.com/givheart_gifts?igsh=MXYzd2F0ODY3cHcy&utm_source=qr",
       iconSrc: "/images/home/footer/insta_logo.png",
     },
   ],

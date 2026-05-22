@@ -10,7 +10,7 @@ import {
 function CategoryCard({ category }: { category: LandingCategory }) {
   return (
     <Link
-      to={catalogUrl({ targetAudience: category.targetAudience })}
+      to={catalogUrl({ targetAudiences: [category.targetAudience] })}
       className="group relative flex h-full min-h-0 overflow-hidden rounded-2xl shadow-md ring-1 ring-black/5 transition-shadow hover:shadow-lg"
     >
       <img

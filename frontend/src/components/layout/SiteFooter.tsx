@@ -15,12 +15,10 @@ function SocialLink({
   return (
     <a
       href={href}
+      target="_blank"
+      rel="noopener noreferrer"
       aria-label={label}
-      title="Coming soon"
       className="inline-flex size-10 items-center justify-center rounded-full border border-border/60 bg-background/80 transition-colors hover:border-brand-gold/40 hover:bg-white/60"
-      onClick={(event) => {
-        if (href === "#") event.preventDefault();
-      }}
     >
       <img
         src={iconSrc}

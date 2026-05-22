@@ -27,3 +27,6 @@ jobs:
 
       - name: Run tests
         run: mvn clean test
+        env:
+          JWT_SECRET: test-jwt-secret-for-ci-and-local-tests-32chars
+          DOCKER_COMPOSE_ENABLED: "false"

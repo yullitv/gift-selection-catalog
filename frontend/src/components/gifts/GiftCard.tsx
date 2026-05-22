@@ -9,24 +9,20 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { formatPriceUsd } from "@/lib/formatPrice";
+import { formatTagLabel } from "@/lib/formatTag";
 import type { GiftDto } from "@/types/gift";
 
 type GiftCardProps = {
   gift: GiftDto;
 };
 
-function formatTagLabel(tag: string): string {
-  if (!tag) return tag;
-  return tag.charAt(0).toUpperCase() + tag.slice(1);
-}
-
 export default function GiftCard({ gift }: GiftCardProps) {
   const tag = gift.tags[0] ? formatTagLabel(gift.tags[0]) : undefined;
-  const imageSrc = gift.photoUrl ?? "/favicon.png";
+  const imageSrc = gift.primaryImageUrl ?? gift.photoUrl ?? "/favicon.png";
 
   return (
-    <Card className="gap-0 overflow-hidden rounded-2xl border border-white/50 bg-white/55 py-0 shadow-lg ring-0 backdrop-blur-md">
-      <div className="relative aspect-square w-full overflow-hidden bg-muted">
+    <Card className="flex h-full flex-col gap-0 overflow-hidden rounded-2xl border border-white/50 bg-white/55 py-0 shadow-lg ring-0 backdrop-blur-md">
+      <div className="relative aspect-square w-full shrink-0 overflow-hidden bg-muted">
         <img
           src={imageSrc}
           alt={gift.name}
@@ -36,19 +32,20 @@ export default function GiftCard({ gift }: GiftCardProps) {
         />
       </div>
 
-      <CardContent className="flex flex-col gap-3 px-4 pb-4 pt-4">
-        <div className="space-y-1 text-left">
-          <CardTitle className="line-clamp-2 text-base font-semibold text-foreground">
+      <CardContent className="flex flex-1 flex-col gap-3 px-4 pb-4 pt-4">
+        <div className="flex-1 space-y-1 text-left">
+          <CardTitle className="line-clamp-2 min-h-11 text-base font-semibold text-foreground">
+            {" "}
             {gift.name}
           </CardTitle>
-          {tag ? (
-            <CardDescription className="text-sm text-muted-foreground">
-              {tag}
-            </CardDescription>
-          ) : null}
+          <CardDescription
+            className={`line-clamp-1 min-h-5 text-sm text-muted-foreground ${tag ? "" : "invisible"}`}
+          >
+            {tag ?? "\u00a0"}
+          </CardDescription>
         </div>
 
-        <div className="flex items-center justify-between gap-2">
+        <div className="mt-auto flex items-center justify-between gap-2">
           <p className="text-base font-semibold text-foreground">
             {formatPriceUsd(gift.priceCents)}
           </p>
