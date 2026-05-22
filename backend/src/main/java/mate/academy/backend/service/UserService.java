@@ -1,5 +1,6 @@
 package mate.academy.backend.service;
 
+import mate.academy.backend.common.error.NotFoundException;
 import mate.academy.backend.dao.UserRepository;
 import mate.academy.backend.dto.UpdateProfileRequest;
 import mate.academy.backend.dto.UserDto;
@@ -19,14 +20,14 @@ public class UserService {
     @Transactional(readOnly = true)
     public UserDto getProfile(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(NotFoundException::user);
         return toDto(user);
     }
 
     @Transactional
     public UserDto updateProfile(Long userId, UpdateProfileRequest req) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(NotFoundException::user);
         user.setFullName(FullNameUtils.join(req.firstName(), req.lastName()));
         if (req.phone() != null) {
             String phone = req.phone().trim();
