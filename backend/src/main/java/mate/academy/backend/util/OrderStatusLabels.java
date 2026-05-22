@@ -8,10 +8,10 @@ public final class OrderStatusLabels {
 
     public static String label(OrderStatus status) {
         return switch (status) {
-            case PENDING_PAYMENT -> "Очікує оплати";
-            case IN_TRANSIT -> "В дорозі";
-            case COMPLETED -> "Виконано";
-            case CANCELLED -> "Скасовано";
+            case PENDING_PAYMENT -> "Pending payment";
+            case IN_TRANSIT -> "In transit";
+            case COMPLETED -> "Completed";
+            case CANCELLED -> "Cancelled";
         };
     }
 }

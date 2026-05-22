@@ -1,6 +1,8 @@
 package mate.academy.backend.auth;
 
 import java.time.Instant;
+import mate.academy.backend.common.error.ConflictException;
+import mate.academy.backend.common.error.NotFoundException;
 import mate.academy.backend.dto.Authdto.AuthLoginRequest;
 import mate.academy.backend.dto.Authdto.AuthRegisterRequest;
 import mate.academy.backend.dto.Authdto.AuthResponse;
@@ -47,7 +49,7 @@ public class AuthService {
     @Transactional
     public AuthResponse register(AuthRegisterRequest req) {
         if (userRepository.existsByEmail(req.email())) {
-            throw new IllegalArgumentException("Email is already in use");
+            throw ConflictException.emailAlreadyRegistered();
         }
         User u = new User();
         u.setFullName(req.firstName().trim() + " " + req.lastName().trim());
@@ -67,7 +69,7 @@ public class AuthService {
         );
         UserPrincipal principal = (UserPrincipal) auth.getPrincipal();
         User u = userRepository.findById(principal.getId())
-                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+                .orElseThrow(NotFoundException::user);
         String token = issueToken(u);
         return new AuthResponse(token, CurrentUser.from(u));
     }

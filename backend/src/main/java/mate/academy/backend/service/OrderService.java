@@ -1,7 +1,8 @@
 package mate.academy.backend.service;
 
 import java.util.List;
-import java.util.NoSuchElementException;
+import mate.academy.backend.common.error.BadRequestException;
+import mate.academy.backend.common.error.NotFoundException;
 import mate.academy.backend.dao.CartItemRepository;
 import mate.academy.backend.dao.GiftRepository;
 import mate.academy.backend.dao.OrderRepository;
@@ -49,7 +50,7 @@ public class OrderService {
     @Transactional(readOnly = true)
     public OrderDetailsDto getOrder(Long userId, Long orderId) {
         Order order = orderRepository.findByIdAndUser_IdWithItems(orderId, userId)
-                .orElseThrow(() -> new NoSuchElementException("Order not found"));
+                .orElseThrow(NotFoundException::order);
         return orderMapper.toDetailsDto(order);
     }
 
@@ -57,7 +58,7 @@ public class OrderService {
     public OrderDetailsDto checkout(Long userId) {
         List<CartItem> cartItems = cartItemRepository.findAllByUser_IdWithGift(userId);
         if (cartItems.isEmpty()) {
-            throw new IllegalArgumentException("Cart is empty");
+            throw new BadRequestException("Cart is empty");
         }
 
         User user = userRepository.getReferenceById(userId);
@@ -97,14 +98,14 @@ public class OrderService {
     @Transactional
     public OrderSummaryDto updateStatus(Long orderId, UpdateOrderStatusRequest request) {
         Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new NoSuchElementException("Order not found"));
+                .orElseThrow(NotFoundException::order);
         order.setStatus(request.status());
         return orderMapper.toSummaryDto(order);
     }
 
     private void validateStock(Gift gift, int quantity) {
         if (quantity > gift.getStockQuantity()) {
-            throw new IllegalArgumentException("Not enough stock available for gift: " + gift.getName());
+            throw new BadRequestException("Not enough stock available for gift: " + gift.getName());
         }
     }
 
