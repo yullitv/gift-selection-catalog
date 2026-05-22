@@ -6,6 +6,7 @@ import CatalogPage from "@/pages/CatalogPage";
 import GiftDetailPage from "@/pages/GiftDetailPage";
 import LandingPage from "@/pages/LandingPage";
 import LoginPage from "@/pages/LoginPage";
+import RegisterPage from "@/pages/RegisterPage";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/catalog" element={<CatalogPage />} />
         <Route path="/gift/:id" element={<GiftDetailPage />} />
+        <Route path="/register" element={<RegisterPage />} />
         <Route path="/login" element={<LoginPage />} />
       </Route>
 

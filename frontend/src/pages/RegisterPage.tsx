@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 import AuthCard from "@/components/auth/AuthCard";
 import AuthPageLayout from "@/components/auth/AuthPageLayout";
-import LoginForm from "@/components/auth/LoginForm";
+import RegisterForm from "@/components/auth/RegisterForm";
 import {
   CardContent,
   CardDescription,
@@ -11,7 +11,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-export default function LoginPage() {
+export default function RegisterPage() {
   return (
     <AuthPageLayout>
       <AuthCard>
@@ -27,22 +27,22 @@ export default function LoginPage() {
             </span>
           </div>
           <CardTitle className="font-serif text-2xl font-semibold tracking-tight">
-            Welcome back
+            Create your account
           </CardTitle>
           <CardDescription className="text-base">
-            Sign in to your account
+            Start sending meaningful gifts today
           </CardDescription>
         </CardHeader>
 
         <CardContent className="px-6 pt-2">
-          <LoginForm />
+          <RegisterForm />
         </CardContent>
 
         <CardFooter className="flex justify-center border-0 bg-transparent px-6 pt-2">
-          <p className="text-sm text-muted-foreground">
-            Don&apos;t have an account?{" "}
-            <Link to="/register" className="auth-footer-link">
-              Sign up
+          <p className="text-center text-sm text-muted-foreground">
+            Already have an account?{" "}
+            <Link to="/login" className="auth-footer-link">
+              Sign In
             </Link>
           </p>
         </CardFooter>

@@ -149,3 +149,7 @@
 @utility glass-pill {
   @apply inline-flex items-center justify-center rounded-full border border-white/30 bg-white/15 font-medium text-white shadow-lg backdrop-blur-md transition-colors hover:bg-white/25;
 }
+
+@utility auth-footer-link {
+  @apply font-medium text-foreground underline-offset-4 hover:text-brand-gold hover:underline;
+}
