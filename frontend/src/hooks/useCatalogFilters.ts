@@ -8,7 +8,7 @@ import {
   parseCatalogSearchParams,
   patchCatalogFilters,
   type CatalogFiltersState,
-} from "@/lib/catalogSearchParams";
+} from "@/lib/catalog/catalogSearchParams";
 
 export function useCatalogFilters() {
   const [searchParams, setSearchParams] = useSearchParams();

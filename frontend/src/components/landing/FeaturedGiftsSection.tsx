@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 
 import GiftCard from "@/components/gifts/GiftCard";
 import GiftCardSkeleton from "@/components/gifts/GiftCardSkeleton";
-import { catalogUrl } from "@/lib/catalogUrl";
-import { fetchGifts } from "@/lib/giftsApi";
+import { catalogUrl } from "@/lib/catalog/catalogUrl";
+import { fetchGifts } from "@/lib/gifts/giftsApi";
 import type { GiftDto } from "@/types/gift";
 
 const FEATURED_GIFTS_COUNT = 3;

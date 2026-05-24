@@ -6,6 +6,8 @@ import CatalogPage from "@/pages/CatalogPage";
 import GiftDetailPage from "@/pages/GiftDetailPage";
 import LandingPage from "@/pages/LandingPage";
 import LoginPage from "@/pages/LoginPage";
+import NotFoundPage from "@/pages/NotFoundPage";
+import OrderSuccessPage from "@/pages/OrderSuccessPage";
 import RegisterPage from "@/pages/RegisterPage";
 
 function App() {
@@ -17,6 +19,8 @@ function App() {
         <Route path="/gift/:id" element={<GiftDetailPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/login" element={<LoginPage />} />
+        <Route path="/order/success" element={<OrderSuccessPage />} />
+        <Route path="*" element={<NotFoundPage />} />
       </Route>
 
       <Route path="/dev/smoke" element={<ApiSmokeTestPage />} />

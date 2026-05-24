@@ -1,7 +1,7 @@
 import {
   VALUE_STRIP_ITEMS,
   type ValueStripItem,
-} from "@/constants/valueStripItems";
+} from "@/constants/landing/valueStripItems";
 
 function ValueStripCard({ item }: { item: ValueStripItem }) {
   return (

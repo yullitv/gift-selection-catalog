@@ -14,7 +14,7 @@ import {
 import {
   CATALOG_FIELD_CLASS,
   CATALOG_SUBTITLE_CLASS,
-} from "@/constants/catalogLayout";
+} from "@/constants/catalog/layout";
 import { useCatalogFilters } from "@/hooks/useCatalogFilters";
 import { useCatalogGifts } from "@/hooks/useCatalogGifts";
 import { cn } from "@/lib/utils";

@@ -8,8 +8,8 @@ import {
   CardDescription,
   CardTitle,
 } from "@/components/ui/card";
-import { formatPriceUsd } from "@/lib/formatPrice";
-import { formatTagLabel } from "@/lib/formatTag";
+import { formatPriceUsd } from "@/lib/format/formatPrice";
+import { formatTagLabel } from "@/lib/format/formatTag";
 import type { GiftDto } from "@/types/gift";
 
 type GiftCardProps = {

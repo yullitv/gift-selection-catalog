@@ -1,7 +1,7 @@
 import { useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { Search } from "lucide-react";
-import { catalogUrl } from "@/lib/catalogUrl";
+import { catalogUrl } from "@/lib/catalog/catalogUrl";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
