@@ -12,6 +12,7 @@ import {
   BRAND_PRIMARY_BUTTON_CLASS,
   PDP_ACTION_BUTTON_CLASS,
 } from "@/constants/uiClasses";
+import { useCart } from "@/hooks/useCart";
 import { useGiftDetail } from "@/hooks/useGiftDetail";
 import { formatAudienceList } from "@/lib/format/formatAudience";
 import { formatPriceUsd } from "@/lib/format/formatPrice";
@@ -90,10 +91,12 @@ type GiftDetailContentProps = {
 function GiftDetailContent({ giftId }: GiftDetailContentProps) {
   const { gift, recommendations, loading, notFound, error } =
     useGiftDetail(giftId);
+  const { addGift, isInCart } = useCart();
 
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const [inCart, setInCart] = useState(false);
   const [wishlisted, setWishlisted] = useState(false);
+
+  const inCart = isInCart(giftId);
 
   if (loading) {
     return (
@@ -128,7 +131,8 @@ function GiftDetailContent({ giftId }: GiftDetailContentProps) {
   const specRows = buildSpecRows(gift);
 
   function handleAddToCart() {
-    setInCart(true);
+    if (!gift) return;
+    addGift(gift);
     notifySuccess("Added to cart");
   }
 
@@ -168,7 +172,7 @@ function GiftDetailContent({ giftId }: GiftDetailContentProps) {
             <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch">
               <Button
                 type="button"
-                disabled={!inStock || inCart}
+                disabled={!inStock}
                 onClick={handleAddToCart}
                 className={cn(
                   PDP_ACTION_BUTTON_CLASS,

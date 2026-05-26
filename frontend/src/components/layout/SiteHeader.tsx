@@ -3,17 +3,22 @@ import { Heart, ShoppingCart } from "lucide-react";
 
 import HeaderSearch from "@/components/layout/HeaderSearch";
 import { Button } from "@/components/ui/button";
+import { ROUTES } from "@/constants/routes";
 import { useAuth } from "@/hooks/useAuth";
+import { useCart } from "@/hooks/useCart";
+import { cn } from "@/lib/utils";
 
 export default function SiteHeader() {
   const { isAuthenticated, logout } = useAuth();
+  const { totals } = useCart();
   const { pathname } = useLocation();
-  const showHeaderSearch = pathname !== "/catalog";
+  const showHeaderSearch = pathname !== ROUTES.catalog;
+  const cartCount = totals.itemCount;
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
       <div className="mx-auto flex h-14 max-w-6xl items-center gap-2 px-4 md:h-16 md:gap-4">
-        <Link to="/" className="flex shrink-0 items-center gap-2">
+        <Link to={ROUTES.home} className="flex shrink-0 items-center gap-2">
           <img
             src="/favicon.png"
             alt="GIVHEART Gift Catalog"
@@ -25,7 +30,7 @@ export default function SiteHeader() {
         </Link>
 
         <Link
-          to="/catalog"
+          to={ROUTES.catalog}
           className="shrink-0 text-sm font-medium text-foreground hover:text-primary"
         >
           Catalog
@@ -54,11 +59,24 @@ export default function SiteHeader() {
             type="button"
             variant="ghost"
             size="icon"
-            disabled
-            aria-label="Cart — coming soon"
-            title="Coming soon"
+            asChild
+            className="relative"
+            aria-label={
+              cartCount > 0 ? `Cart, ${cartCount} items` : "Cart"
+            }
           >
-            <ShoppingCart />
+            <Link to={ROUTES.cart}>
+              <ShoppingCart
+                className={cn(
+                  cartCount > 0 && "text-brand-gold",
+                )}
+              />
+              {cartCount > 0 && (
+                <span className="absolute -right-0.5 -top-0.5 flex size-4 items-center justify-center rounded-full bg-brand-gold text-[10px] font-semibold text-white">
+                  {cartCount > 9 ? "9+" : cartCount}
+                </span>
+              )}
+            </Link>
           </Button>
         </div>
 
@@ -74,7 +92,7 @@ export default function SiteHeader() {
           </Button>
         ) : (
           <Button variant="outline" size="sm" asChild className="shrink-0">
-            <Link to="/login">Log in</Link>
+            <Link to={ROUTES.login}>Log in</Link>
           </Button>
         )}
       </div>
