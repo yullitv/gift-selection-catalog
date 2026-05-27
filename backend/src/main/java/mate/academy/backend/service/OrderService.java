@@ -7,15 +7,19 @@ import mate.academy.backend.dao.CartItemRepository;
 import mate.academy.backend.dao.GiftRepository;
 import mate.academy.backend.dao.OrderRepository;
 import mate.academy.backend.dao.UserRepository;
+import mate.academy.backend.dto.CreateOrderRequest;
 import mate.academy.backend.dto.OrderDetailsDto;
 import mate.academy.backend.dto.OrderSummaryDto;
 import mate.academy.backend.dto.UpdateOrderStatusRequest;
 import mate.academy.backend.mapper.OrderMapper;
 import mate.academy.backend.model.CartItem;
+import mate.academy.backend.model.DeliveryType;
 import mate.academy.backend.model.Gift;
 import mate.academy.backend.model.Order;
 import mate.academy.backend.model.OrderItem;
 import mate.academy.backend.model.OrderStatus;
+import mate.academy.backend.model.PaymentMethod;
+import mate.academy.backend.model.PaymentStatus;
 import mate.academy.backend.model.User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -55,7 +59,7 @@ public class OrderService {
     }
 
     @Transactional
-    public OrderDetailsDto checkout(Long userId) {
+    public OrderDetailsDto checkout(Long userId, CreateOrderRequest request) {
         List<CartItem> cartItems = cartItemRepository.findAllByUser_IdWithGift(userId);
         if (cartItems.isEmpty()) {
             throw new BadRequestException("Cart is empty");
@@ -64,7 +68,7 @@ public class OrderService {
         User user = userRepository.getReferenceById(userId);
         Order order = new Order();
         order.setUser(user);
-        order.setStatus(OrderStatus.PENDING_PAYMENT);
+        applyCheckoutDetails(order, request);
 
         int totalCents = 0;
         for (CartItem cartItem : cartItems) {
@@ -101,6 +105,38 @@ public class OrderService {
                 .orElseThrow(NotFoundException::order);
         order.setStatus(request.status());
         return orderMapper.toSummaryDto(order);
+    }
+
+    private void applyCheckoutDetails(Order order, CreateOrderRequest request) {
+        order.setRecipientFullName(request.recipientFullName());
+        order.setRecipientPhone(request.recipientPhone());
+        order.setRecipientEmail(request.recipientEmail());
+        order.setDeliveryType(request.deliveryType());
+        order.setPaymentMethod(request.paymentMethod());
+
+        if (request.deliveryType() == DeliveryType.COURIER) {
+            order.setCourierAddress(request.courierAddress());
+        } else {
+            order.setNpCityRef(request.npCityRef());
+            order.setNpCityName(request.npCityName());
+            order.setNpWarehouseRef(request.npWarehouseRef());
+            order.setNpWarehouseName(request.npWarehouseName());
+        }
+
+        applyPaymentDetails(order, request.paymentMethod());
+    }
+
+    private void applyPaymentDetails(Order order, PaymentMethod paymentMethod) {
+        switch (paymentMethod) {
+            case CASH_ON_DELIVERY -> {
+                order.setPaymentStatus(PaymentStatus.PENDING);
+                order.setStatus(OrderStatus.PENDING_PAYMENT);
+            }
+            case CARD_ONLINE, APPLE_PAY, GOOGLE_PAY -> {
+                order.setPaymentStatus(PaymentStatus.PAID);
+                order.setStatus(OrderStatus.IN_TRANSIT);
+            }
+        }
     }
 
     private void validateStock(Gift gift, int quantity) {

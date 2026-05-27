@@ -41,6 +41,42 @@ public class Order {
     @Column(nullable = false)
     private OrderStatus status;
 
+    @Column(name = "recipient_full_name")
+    private String recipientFullName;
+
+    @Column(name = "recipient_phone", length = 32)
+    private String recipientPhone;
+
+    @Column(name = "recipient_email")
+    private String recipientEmail;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "delivery_type", length = 32)
+    private DeliveryType deliveryType;
+
+    @Column(name = "np_city_ref", length = 64)
+    private String npCityRef;
+
+    @Column(name = "np_city_name")
+    private String npCityName;
+
+    @Column(name = "np_warehouse_ref", length = 64)
+    private String npWarehouseRef;
+
+    @Column(name = "np_warehouse_name")
+    private String npWarehouseName;
+
+    @Column(name = "courier_address", columnDefinition = "text")
+    private String courierAddress;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "payment_method", length = 32)
+    private PaymentMethod paymentMethod;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "payment_status", length = 32)
+    private PaymentStatus paymentStatus;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 
