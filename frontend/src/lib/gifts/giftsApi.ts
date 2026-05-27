@@ -54,3 +54,8 @@ export async function fetchGifts(
   const page = await fetchGiftPage(params);
   return page.content;
 }
+
+export async function fetchGiftById(id: number): Promise<GiftDto> {
+  const { data } = await apiClient.get<GiftDto>(`/gifts/${id}`);
+  return data;
+}

@@ -10,3 +10,7 @@ export const ROUTES = {
 export type OrderSuccessState = {
   orderId: string;
 };
+
+export function giftDetailPath(id: number | string): string {
+  return `/gift/${id}`;
+}
