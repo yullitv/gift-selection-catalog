@@ -1,6 +1,6 @@
 import { Check } from "lucide-react";
 
-import { ABOUT_COPY, type AboutStat } from "@/constants/aboutCopy";
+import { ABOUT_COPY, type AboutStat } from "@/constants/landing/aboutCopy";
 
 function StatCard({ stat }: { stat: AboutStat }) {
   return (

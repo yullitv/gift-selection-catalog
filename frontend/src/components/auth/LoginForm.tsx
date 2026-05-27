@@ -2,7 +2,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -14,11 +13,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import {
-  applyLoginFormErrors,
-  login as loginUser,
-} from "@/lib/authApi";
-import { setAccessToken } from "@/lib/authStorage";
+import { ROUTES } from "@/constants/routes";
+import { BRAND_SUBMIT_BUTTON_CLASS } from "@/constants/uiClasses";
+import { applyLoginFormErrors, login as loginUser } from "@/lib/auth/authApi";
+import { setAccessToken } from "@/lib/auth/authStorage";
+import { notifyError, notifySuccess } from "@/lib/notify";
 import { loginSchema, type LoginFormValues } from "@/schemas/loginSchema";
 
 const defaultValues: LoginFormValues = {
@@ -41,12 +40,12 @@ export default function LoginForm() {
       const res = await loginUser(values);
 
       setAccessToken(res.accessToken);
-      toast.success("Welcome back!");
-      navigate("/");
+      notifySuccess("Welcome back!");
+      navigate(ROUTES.home);
     } catch (error) {
       const toastMessage = applyLoginFormErrors(error, form.setError);
       if (toastMessage) {
-        toast.error(toastMessage);
+        notifyError(toastMessage);
       }
     }
   }
@@ -99,7 +98,7 @@ export default function LoginForm() {
         <Button
           type="submit"
           disabled={form.formState.isSubmitting}
-          className="mt-2 inline-flex h-11 w-full items-center justify-center rounded-xl bg-brand-gold text-white shadow-md hover:bg-brand-gold/90"
+          className={BRAND_SUBMIT_BUTTON_CLASS}
         >
           {form.formState.isSubmitting ? (
             <>

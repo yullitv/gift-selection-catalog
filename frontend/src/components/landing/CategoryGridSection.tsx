@@ -1,11 +1,11 @@
 import { Link } from "react-router-dom";
-import { catalogUrl } from "@/lib/catalogUrl";
+import { catalogUrl } from "@/lib/catalog/catalogUrl";
 
 import { Button } from "@/components/ui/button";
 import {
   LANDING_CATEGORIES,
   type LandingCategory,
-} from "@/constants/landingCategories";
+} from "@/constants/landing/categories";
 
 function CategoryCard({ category }: { category: LandingCategory }) {
   return (

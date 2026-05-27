@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import {
   CATALOG_GRID_CLASS,
   CATALOG_SKELETON_COUNT,
-} from "@/constants/catalogLayout";
+} from "@/constants/catalog/layout";
 import type { GiftDto } from "@/types/gift";
 
 type CatalogResultsProps = {

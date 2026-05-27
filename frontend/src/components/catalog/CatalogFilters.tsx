@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 
-import { LANDING_CATEGORIES } from "@/constants/landingCategories";
-import { CATALOG_SORT_OPTIONS } from "@/constants/catalogSortOptions";
 import {
   CATALOG_FIELD_CLASS,
   CATALOG_FILTERS_PANEL_CLASS,
-} from "@/constants/catalogLayout";
+} from "@/constants/catalog/layout";
+import { CATALOG_SORT_OPTIONS } from "@/constants/catalog/sortOptions";
+import { LANDING_CATEGORIES } from "@/constants/landing/categories";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
-import type { CatalogFiltersState } from "@/lib/catalogSearchParams";
+import type { CatalogFiltersState } from "@/lib/catalog/catalogSearchParams";
 import { cn } from "@/lib/utils";
 import type { GiftAudience, GiftSort } from "@/types/gift";
 
@@ -113,10 +113,7 @@ export default function CatalogFilters({
         </h2>
         <div className="mt-3 grid grid-cols-2 gap-2">
           <div>
-            <Label
-              htmlFor="price-min"
-              className="text-xs text-foreground/65"
-            >
+            <Label htmlFor="price-min" className="text-xs text-foreground/65">
               Min
             </Label>
             <Input
@@ -130,10 +127,7 @@ export default function CatalogFilters({
             />
           </div>
           <div>
-            <Label
-              htmlFor="price-max"
-              className="text-xs text-foreground/65"
-            >
+            <Label htmlFor="price-max" className="text-xs text-foreground/65">
               Max
             </Label>
             <Input

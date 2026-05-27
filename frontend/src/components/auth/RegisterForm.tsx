@@ -2,7 +2,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -14,11 +13,14 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { ROUTES } from "@/constants/routes";
+import { BRAND_SUBMIT_BUTTON_CLASS } from "@/constants/uiClasses";
 import {
   applyRegisterFormErrors,
   register as registerUser,
-} from "@/lib/authApi";
-import { setAccessToken } from "@/lib/authStorage";
+} from "@/lib/auth/authApi";
+import { setAccessToken } from "@/lib/auth/authStorage";
+import { notifyError, notifySuccess } from "@/lib/notify";
 import {
   registerSchema,
   type RegisterFormValues,
@@ -52,12 +54,12 @@ export default function RegisterForm() {
       });
 
       setAccessToken(res.accessToken);
-      toast.success("Account created successfully");
-      navigate("/login");
+      notifySuccess("Account created successfully");
+      navigate(ROUTES.login);
     } catch (error) {
       const toastMessage = applyRegisterFormErrors(error, form.setError);
       if (toastMessage) {
-        toast.error(toastMessage);
+        notifyError(toastMessage);
       }
     }
   }
@@ -169,7 +171,7 @@ export default function RegisterForm() {
         <Button
           type="submit"
           disabled={form.formState.isSubmitting}
-          className="mt-2 inline-flex h-11 w-full items-center justify-center rounded-xl bg-brand-gold text-white shadow-md hover:bg-brand-gold/90"
+          className={BRAND_SUBMIT_BUTTON_CLASS}
         >
           {form.formState.isSubmitting ? (
             <>

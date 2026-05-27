@@ -1,11 +1,9 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { toast } from "sonner";
 
-import {
-  clearAccessToken,
-  isAuthenticated,
-} from "@/lib/authStorage";
+import { ROUTES } from "@/constants/routes";
+import { clearAccessToken, isAuthenticated } from "@/lib/auth/authStorage";
+import { notifySuccess } from "@/lib/notify";
 
 export function useAuth() {
   const navigate = useNavigate();
@@ -19,8 +17,8 @@ export function useAuth() {
 
   const logout = useCallback(() => {
     clearAccessToken();
-    toast.success("Signed out");
-    navigate("/login");
+    notifySuccess("Signed out");
+    navigate(ROUTES.login);
   }, [navigate]);
 
   return { isAuthenticated: loggedIn, logout };

@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import { MapPin, Phone } from "lucide-react";
 
-import { FOOTER_COPY } from "@/constants/footerCopy";
+import { FOOTER_COPY } from "@/constants/landing/footerCopy";
 
 function SocialLink({
   href,

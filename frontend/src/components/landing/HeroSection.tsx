@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 
-import { catalogUrl } from "@/lib/catalogUrl";
+import { catalogUrl } from "@/lib/catalog/catalogUrl";
 
 export default function HeroSection() {
   return (

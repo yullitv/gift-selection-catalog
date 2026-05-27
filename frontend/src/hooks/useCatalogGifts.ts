@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 
-import { fetchGiftPage } from "@/lib/giftsApi";
+import { fetchGiftPage } from "@/lib/gifts/giftsApi";
 import {
   parseCatalogSearchParams,
   toFetchGiftsParams,
-} from "@/lib/catalogSearchParams";
+} from "@/lib/catalog/catalogSearchParams";
 import type { GiftDto } from "@/types/gift";
 
 export function useCatalogGifts(searchParams: URLSearchParams) {
