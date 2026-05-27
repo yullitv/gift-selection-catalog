@@ -25,6 +25,7 @@ backend/target/
 backend/build/
 backend/.gradle/
 backend/out/
+backend/src/main/resources/application-local.properties
 *.class
 *.jar
 *.war

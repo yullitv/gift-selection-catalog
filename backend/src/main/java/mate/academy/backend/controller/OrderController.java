@@ -2,18 +2,14 @@ package mate.academy.backend.controller;
 
 import jakarta.validation.Valid;
 import java.util.List;
+import mate.academy.backend.dto.CreateOrderRequest;
 import mate.academy.backend.dto.OrderDetailsDto;
 import mate.academy.backend.dto.OrderSummaryDto;
 import mate.academy.backend.service.OrderService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.jwt.Jwt;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/orders")
@@ -36,8 +32,9 @@ public class OrderController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public OrderDetailsDto checkout(@AuthenticationPrincipal Jwt jwt) {
-        return orderService.checkout(currentUserId(jwt));
+    public OrderDetailsDto checkout(@AuthenticationPrincipal Jwt jwt,
+                                    @Valid @RequestBody CreateOrderRequest request) {
+        return orderService.checkout(currentUserId(jwt), request);
     }
 
     private Long currentUserId(Jwt jwt) {
