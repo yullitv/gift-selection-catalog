@@ -12,6 +12,7 @@ import {
   BRAND_PRIMARY_BUTTON_CLASS,
   PDP_ACTION_BUTTON_CLASS,
 } from "@/constants/uiClasses";
+import { useCart } from "@/hooks/useCart";
 import { useGiftDetail } from "@/hooks/useGiftDetail";
 import { formatAudienceList } from "@/lib/format/formatAudience";
 import { formatPriceUsd } from "@/lib/format/formatPrice";
@@ -38,17 +39,16 @@ function buildSpecRows(gift: GiftDto) {
     },
   ];
 
-  if (gift.minAge != null || gift.maxAge != null) {
-    let ageValue: string;
+  const ageValue =
+    gift.minAge != null && gift.maxAge != null
+      ? `${gift.minAge}–${gift.maxAge}`
+      : gift.minAge != null
+        ? `${gift.minAge}+`
+        : gift.maxAge != null
+          ? `Up to ${gift.maxAge}`
+          : null;
 
-    if (gift.minAge != null && gift.maxAge != null) {
-      ageValue = `${gift.minAge}–${gift.maxAge}`;
-    } else if (gift.minAge != null) {
-      ageValue = `${gift.minAge}+`;
-    } else {
-      ageValue = `Up to ${gift.maxAge}`;
-    }
-
+  if (ageValue !== null) {
     rows.push({ label: "Age", value: ageValue });
   }
 
@@ -90,10 +90,12 @@ type GiftDetailContentProps = {
 function GiftDetailContent({ giftId }: GiftDetailContentProps) {
   const { gift, recommendations, loading, notFound, error } =
     useGiftDetail(giftId);
+  const { addGift, isInCart } = useCart();
 
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const [inCart, setInCart] = useState(false);
   const [wishlisted, setWishlisted] = useState(false);
+
+  const inCart = isInCart(giftId);
 
   if (loading) {
     return (
@@ -123,12 +125,13 @@ function GiftDetailContent({ giftId }: GiftDetailContentProps) {
     );
   }
 
-  const images = getGiftImageUrls(gift);
-  const inStock = gift.stockQuantity > 0;
-  const specRows = buildSpecRows(gift);
+  const currentGift = gift;
+  const images = getGiftImageUrls(currentGift);
+  const inStock = currentGift.stockQuantity > 0;
+  const specRows = buildSpecRows(currentGift);
 
   function handleAddToCart() {
-    setInCart(true);
+    addGift(currentGift);
     notifySuccess("Added to cart");
   }
 
@@ -153,10 +156,10 @@ function GiftDetailContent({ giftId }: GiftDetailContentProps) {
           <div className="order-2 flex min-w-0 flex-col gap-8 lg:order-1">
             <div>
               <h1 className="font-serif text-3xl font-semibold tracking-tight text-foreground md:text-4xl">
-                {gift.name}
+                {currentGift.name}
               </h1>
               <p className="mt-4 text-3xl font-semibold text-brand-gold">
-                {formatPriceUsd(gift.priceCents)}
+                {formatPriceUsd(currentGift.priceCents)}
               </p>
               <p
                 className={`mt-2 text-sm font-medium ${inStock ? "text-green-700" : "text-destructive"}`}
@@ -168,7 +171,7 @@ function GiftDetailContent({ giftId }: GiftDetailContentProps) {
             <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch">
               <Button
                 type="button"
-                disabled={!inStock || inCart}
+                disabled={!inStock}
                 onClick={handleAddToCart}
                 className={cn(
                   PDP_ACTION_BUTTON_CLASS,
@@ -203,7 +206,7 @@ function GiftDetailContent({ giftId }: GiftDetailContentProps) {
                 Description
               </h2>
               <p className="mt-3 whitespace-pre-wrap wrap-break-word leading-relaxed text-muted-foreground">
-                {gift.description || "No description available."}
+                {currentGift.description || "No description available."}
               </p>
             </div>
 
@@ -222,7 +225,7 @@ function GiftDetailContent({ giftId }: GiftDetailContentProps) {
               images={images}
               selectedIndex={selectedImageIndex}
               onSelect={setSelectedImageIndex}
-              alt={gift.name}
+              alt={currentGift.name}
             />
           </div>
         </div>
