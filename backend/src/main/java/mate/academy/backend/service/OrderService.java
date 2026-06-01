@@ -31,19 +31,22 @@ public class OrderService {
     private final UserRepository userRepository;
     private final GiftRepository giftRepository;
     private final OrderMapper orderMapper;
+    private final EmailService emailService;
 
     public OrderService(
             OrderRepository orderRepository,
             CartItemRepository cartItemRepository,
             UserRepository userRepository,
             GiftRepository giftRepository,
-            OrderMapper orderMapper
+            OrderMapper orderMapper,
+            EmailService emailService
     ) {
         this.orderRepository = orderRepository;
         this.cartItemRepository = cartItemRepository;
         this.userRepository = userRepository;
         this.giftRepository = giftRepository;
         this.orderMapper = orderMapper;
+        this.emailService = emailService;
     }
 
     @Transactional(readOnly = true)
@@ -93,6 +96,7 @@ public class OrderService {
         order.setTotalCents(totalCents);
         Order saved = orderRepository.save(order);
         cartItemRepository.deleteAllByUser_Id(userId);
+        emailService.sendOrderConfirmation(saved);
 
         return orderRepository.findByIdAndUser_IdWithItems(saved.getId(), userId)
                 .map(orderMapper::toDetailsDto)
