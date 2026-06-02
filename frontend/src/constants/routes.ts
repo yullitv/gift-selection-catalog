@@ -2,6 +2,7 @@ export const ROUTES = {
   home: "/",
   catalog: "/catalog",
   cart: "/cart",
+  checkout: "/checkout",
   orderSuccess: "/order/success",
   login: "/login",
   register: "/register",
@@ -10,6 +11,10 @@ export const ROUTES = {
 
 export type OrderSuccessState = {
   orderId: string;
+};
+
+export type AuthRedirectState = {
+  from?: string;
 };
 
 export function giftDetailPath(id: number | string): string {
