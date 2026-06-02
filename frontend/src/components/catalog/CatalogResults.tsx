@@ -1,11 +1,13 @@
+import CatalogEmptyState from "@/components/catalog/CatalogEmptyState";
 import GiftCard from "@/components/gifts/GiftCard";
 import GiftCardSkeleton from "@/components/gifts/GiftCardSkeleton";
-import CatalogEmptyState from "@/components/catalog/CatalogEmptyState";
 import { Button } from "@/components/ui/button";
 import {
   CATALOG_GRID_CLASS,
   CATALOG_SKELETON_COUNT,
 } from "@/constants/catalog/layout";
+import { useCart } from "@/hooks/useCart";
+import { notifySuccess } from "@/lib/notify";
 import type { GiftDto } from "@/types/gift";
 
 type CatalogResultsProps = {
@@ -27,6 +29,14 @@ export default function CatalogResults({
   showEmpty,
   onLoadMore,
 }: CatalogResultsProps) {
+  const { addGift, isInCart } = useCart();
+
+  function handleAddToCart(gift: GiftDto) {
+    const alreadyInCart = isInCart(gift.id);
+    addGift(gift, 1);
+    notifySuccess(alreadyInCart ? "Already in cart" : "Added to cart");
+  }
+
   if (loading) {
     return (
       <ul className={CATALOG_GRID_CLASS}>
@@ -56,7 +66,12 @@ export default function CatalogResults({
       <ul className={CATALOG_GRID_CLASS}>
         {gifts.map((gift) => (
           <li key={gift.id} className="h-full">
-            <GiftCard gift={gift} />
+            <GiftCard
+              gift={gift}
+              showAddToCart
+              inCart={isInCart(gift.id)}
+              onAddToCart={handleAddToCart}
+            />
           </li>
         ))}
       </ul>
@@ -64,7 +79,7 @@ export default function CatalogResults({
       {hasMore ? (
         <div className="mt-8 flex justify-center">
           <Button variant="outline" onClick={onLoadMore} disabled={loadingMore}>
-            {loadingMore ? "Loading…" : "Load more"}
+            {loadingMore ? "Loading..." : "Load more"}
           </Button>
         </div>
       ) : null}
