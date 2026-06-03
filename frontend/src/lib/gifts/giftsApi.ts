@@ -6,6 +6,9 @@ import type {
 } from "@/types/gift";
 import { apiClient } from "../api";
 
+/** Backend caps page size at 24 (GiftService). */
+const MAX_GIFT_PAGE_SIZE = 24;
+
 export type FetchGiftsParams = {
   page?: number;
   size?: number;
@@ -58,4 +61,33 @@ export async function fetchGifts(
 export async function fetchGiftById(id: number): Promise<GiftDto> {
   const { data } = await apiClient.get<GiftDto>(`/gifts/${id}`);
   return data;
+}
+
+export type FetchAllGiftsParams = Omit<FetchGiftsParams, "page" | "size">;
+
+/** Loads every page and deduplicates by id. */
+export async function fetchAllGifts(
+  params: FetchAllGiftsParams = {},
+): Promise<GiftDto[]> {
+  const byId = new Map<number, GiftDto>();
+  let page = 0;
+  let totalPages = 1;
+
+  while (page < totalPages) {
+    const res = await fetchGiftPage({
+      ...params,
+      page,
+      size: MAX_GIFT_PAGE_SIZE,
+      sort: params.sort ?? "NEWEST",
+    });
+
+    for (const gift of res.content) {
+      byId.set(gift.id, gift);
+    }
+
+    totalPages = Math.max(res.totalPages ?? 1, 1);
+    page += 1;
+  }
+
+  return Array.from(byId.values());
 }

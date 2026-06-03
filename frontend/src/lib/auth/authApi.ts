@@ -6,7 +6,8 @@ import {
   MSG_SERVER_ERROR,
   MSG_SOMETHING_WRONG,
 } from "@/constants/messages";
-import { getApiErrorMessage, isAxiosErrorWithBody } from "@/lib/apiErrors";
+import { getApiErrorMessage } from "@/lib/apiErrors";
+import { applyApiFormFieldErrors } from "@/lib/forms/apiFieldErrors";
 import type { LoginFormValues } from "@/schemas/loginSchema";
 import type { RegisterFormValues } from "@/schemas/registerSchema";
 import type { AuthResponse, LoginPayload, RegisterPayload } from "@/types/auth";
@@ -19,19 +20,7 @@ const REGISTER_API_FIELDS = [
   "password",
 ] as const;
 
-type RegisterApiField = (typeof REGISTER_API_FIELDS)[number];
-
 const LOGIN_API_FIELDS = ["email", "password"] as const;
-
-type LoginApiField = (typeof LOGIN_API_FIELDS)[number];
-
-function isRegisterApiField(key: string): key is RegisterApiField {
-  return (REGISTER_API_FIELDS as readonly string[]).includes(key);
-}
-
-function isLoginApiField(key: string): key is LoginApiField {
-  return (LOGIN_API_FIELDS as readonly string[]).includes(key);
-}
 
 export async function register(
   payload: RegisterPayload,
@@ -48,13 +37,6 @@ export async function login(payload: LoginPayload): Promise<AuthResponse> {
   return data;
 }
 
-export function getApiFieldErrors(
-  error: unknown,
-): Record<string, string> | null {
-  if (!isAxiosErrorWithBody(error)) return null;
-  return error.response?.data?.details?.fields ?? null;
-}
-
 export function applyRegisterFormErrors(
   error: unknown,
   setError: UseFormSetError<RegisterFormValues>,
@@ -69,17 +51,16 @@ export function applyRegisterFormErrors(
 
   const status = error.response.status;
   const message = getApiErrorMessage(error);
-  const fields = getApiFieldErrors(error);
 
-  if (status === 400 && fields) {
-    let applied = false;
-    for (const [key, msg] of Object.entries(fields)) {
-      if (isRegisterApiField(key)) {
-        setError(key, { message: msg });
-        applied = true;
-      }
-    }
-    if (applied) return null;
+  const fieldToast = applyApiFormFieldErrors({
+    error,
+    setError,
+    allowedFields: REGISTER_API_FIELDS,
+    fallbackMessage: "Registration failed. Please try again.",
+  });
+
+  if (fieldToast === null) {
+    return null;
   }
 
   if (status === 400 && message?.toLowerCase().includes("email")) {
@@ -108,17 +89,16 @@ export function applyLoginFormErrors(
 
   const status = error.response.status;
   const message = getApiErrorMessage(error);
-  const fields = getApiFieldErrors(error);
 
-  if (status === 400 && fields) {
-    let applied = false;
-    for (const [key, msg] of Object.entries(fields)) {
-      if (isLoginApiField(key)) {
-        setError(key, { message: msg });
-        applied = true;
-      }
-    }
-    if (applied) return null;
+  const fieldToast = applyApiFormFieldErrors({
+    error,
+    setError,
+    allowedFields: LOGIN_API_FIELDS,
+    fallbackMessage: "Sign in failed. Please try again.",
+  });
+
+  if (fieldToast === null) {
+    return null;
   }
 
   if (status === 401) {

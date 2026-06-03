@@ -1,3 +1,5 @@
+export type UserRole = "USER" | "ADMIN";
+
 export type RegisterPayload = {
   firstName: string;
   lastName: string;
@@ -9,7 +11,7 @@ export type CurrentUserDto = {
   id: number;
   email: string;
   fullName: string;
-  role: string;
+  role: UserRole;
 };
 
 export type AuthResponse = {

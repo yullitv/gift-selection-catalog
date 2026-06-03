@@ -12,6 +12,7 @@ import {
   BRAND_PRIMARY_BUTTON_CLASS,
   PDP_ACTION_BUTTON_CLASS,
 } from "@/constants/uiClasses";
+import { useAuth } from "@/hooks/useAuth";
 import { useCart } from "@/hooks/useCart";
 import { useGiftDetail } from "@/hooks/useGiftDetail";
 import { formatAudienceList } from "@/lib/format/formatAudience";
@@ -90,7 +91,10 @@ type GiftDetailContentProps = {
 function GiftDetailContent({ giftId }: GiftDetailContentProps) {
   const { gift, recommendations, loading, notFound, error } =
     useGiftDetail(giftId);
+  const { isAuthenticated, isAdmin } = useAuth();
   const { addGift, isInCart } = useCart();
+  const showCartActions = !isAdmin;
+  const showWishlistActions = isAuthenticated && !isAdmin;
 
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
   const [wishlisted, setWishlisted] = useState(false);
@@ -168,38 +172,44 @@ function GiftDetailContent({ giftId }: GiftDetailContentProps) {
               </p>
             </div>
 
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch">
-              <Button
-                type="button"
-                disabled={!inStock}
-                onClick={handleAddToCart}
-                className={cn(
-                  PDP_ACTION_BUTTON_CLASS,
-                  BRAND_PRIMARY_BUTTON_CLASS,
-                )}
-              >
-                <ShoppingCart className="size-4 shrink-0" aria-hidden />
-                {inCart ? "In Cart" : "Add to Cart"}
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleAddToWishlist}
-                className={cn(
-                  PDP_ACTION_BUTTON_CLASS,
-                  "border-border bg-white/80 hover:bg-white",
-                )}
-              >
-                <Heart
-                  className={cn(
-                    "size-4 shrink-0",
-                    wishlisted && "fill-brand-gold text-brand-gold",
-                  )}
-                  aria-hidden
-                />
-                {wishlisted ? "In Wishlist" : "Add to Wishlist"}
-              </Button>
-            </div>
+            {showCartActions || showWishlistActions ? (
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-stretch">
+                {showCartActions ? (
+                  <Button
+                    type="button"
+                    disabled={!inStock}
+                    onClick={handleAddToCart}
+                    className={cn(
+                      PDP_ACTION_BUTTON_CLASS,
+                      BRAND_PRIMARY_BUTTON_CLASS,
+                    )}
+                  >
+                    <ShoppingCart className="size-4 shrink-0" aria-hidden />
+                    {inCart ? "In Cart" : "Add to Cart"}
+                  </Button>
+                ) : null}
+                {showWishlistActions ? (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleAddToWishlist}
+                    className={cn(
+                      PDP_ACTION_BUTTON_CLASS,
+                      "border-border bg-white/80 hover:bg-white",
+                    )}
+                  >
+                    <Heart
+                      className={cn(
+                        "size-4 shrink-0",
+                        wishlisted && "fill-brand-gold text-brand-gold",
+                      )}
+                      aria-hidden
+                    />
+                    {wishlisted ? "In Wishlist" : "Add to Wishlist"}
+                  </Button>
+                ) : null}
+              </div>
+            ) : null}
 
             <div>
               <h2 className="font-serif text-xl font-semibold text-foreground">
@@ -230,7 +240,7 @@ function GiftDetailContent({ giftId }: GiftDetailContentProps) {
           </div>
         </div>
 
-        <GiftRecommendations gifts={recommendations} />
+        {!isAdmin ? <GiftRecommendations gifts={recommendations} /> : null}
       </div>
     </div>
   );

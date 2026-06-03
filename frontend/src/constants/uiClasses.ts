@@ -10,5 +10,7 @@ export const BRAND_SUBMIT_BUTTON_CLASS =
 export const BRAND_PANEL_CLASS =
   "rounded-2xl border border-brand-gold/25 bg-white/90 shadow-lg";
 
+export const ACCOUNT_PANEL_CLASS = `${BRAND_PANEL_CLASS} bg-white/80`;
+
 export const PDP_ACTION_BUTTON_CLASS =
   "inline-flex h-11 min-h-11 flex-1 items-center justify-center gap-2 rounded-xl text-sm font-medium";

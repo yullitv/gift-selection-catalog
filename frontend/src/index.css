@@ -146,6 +146,10 @@
   min-height: calc(100svh - var(--header-height));
 }
 
+@utility h-below-header {
+  height: calc(100svh - var(--header-height));
+}
+
 @utility glass-pill {
   @apply inline-flex items-center justify-center rounded-full border border-white/30 bg-white/15 font-medium text-white shadow-lg backdrop-blur-md transition-colors hover:bg-white/25;
 }

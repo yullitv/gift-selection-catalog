@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/card";
 import { formatPriceUsd } from "@/lib/format/formatPrice";
 import { formatTagLabel } from "@/lib/format/formatTag";
+import { resolveGiftImageUrl } from "@/lib/gifts/giftImages";
 import type { GiftDto } from "@/types/gift";
 
 type GiftCardProps = {
@@ -26,7 +27,7 @@ export default function GiftCard({
   onAddToCart,
 }: GiftCardProps) {
   const tag = gift.tags[0] ? formatTagLabel(gift.tags[0]) : undefined;
-  const imageSrc = gift.primaryImageUrl ?? gift.photoUrl ?? "/favicon.png";
+  const imageSrc = resolveGiftImageUrl(gift.primaryImageUrl ?? gift.photoUrl);
 
   function handleAddClick() {
     onAddToCart?.(gift);
