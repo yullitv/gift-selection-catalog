@@ -1,6 +1,8 @@
 package mate.academy.backend.auth;
 
 import java.time.Instant;
+import java.util.HexFormat;
+import java.security.SecureRandom;
 import mate.academy.backend.common.error.ConflictException;
 import mate.academy.backend.common.error.NotFoundException;
 import mate.academy.backend.dto.Authdto.AuthLoginRequest;
@@ -46,6 +48,8 @@ public class AuthService {
         this.props = props;
     }
 
+    private static final SecureRandom SECURE_RANDOM = new SecureRandom();
+
     @Transactional
     public AuthResponse register(AuthRegisterRequest req) {
         if (userRepository.existsByEmail(req.email())) {
@@ -56,6 +60,7 @@ public class AuthService {
         u.setEmail(req.email().toLowerCase());
         u.setPasswordHash(passwordEncoder.encode(req.password()));
         u.setRole(Role.USER);
+        u.setShareToken(generateUniqueShareToken());
         u.setCreatedAt(Instant.now());
         userRepository.save(u);
 
@@ -72,6 +77,16 @@ public class AuthService {
                 .orElseThrow(NotFoundException::user);
         String token = issueToken(u);
         return new AuthResponse(token, CurrentUser.from(u));
+    }
+
+    private String generateUniqueShareToken() {
+        String token;
+        do {
+            byte[] bytes = new byte[32];
+            SECURE_RANDOM.nextBytes(bytes);
+            token = HexFormat.of().formatHex(bytes);
+        } while (userRepository.existsByShareToken(token));
+        return token;
     }
 
     private String issueToken(User u) {

@@ -19,6 +19,10 @@ public class NotFoundException extends ApiException {
         return new NotFoundException(ErrorCode.USER_NOT_FOUND, "User not found");
     }
 
+    public static NotFoundException wishlistItem() {
+        return new NotFoundException(ErrorCode.WISHLIST_ITEM_NOT_FOUND, "Wishlist item not found");
+    }
+
     public static NotFoundException generic() {
         return new NotFoundException(ErrorCode.NOT_FOUND, "Requested resource not found");
     }
