@@ -13,4 +13,11 @@ public class ConflictException extends ApiException {
                 "A user with this email is already registered"
         );
     }
+
+    public static ConflictException wishlistItemAlreadyExists() {
+        return new ConflictException(
+                ErrorCode.WISHLIST_ITEM_ALREADY_EXISTS,
+                "This gift is already in your wishlist"
+        );
+    }
 }
