@@ -45,12 +45,8 @@ export default function CartOrderSummary({ totals }: CartOrderSummaryProps) {
         className={`mt-6 ${BRAND_PRIMARY_BUTTON_FULL_CLASS}`}
         disabled={totals.itemCount === 0}
       >
-        <Link to={ROUTES.catalog}>Proceed to Checkout</Link>
+        <Link to={ROUTES.checkout}>Proceed to Checkout</Link>
       </Button>
-
-      <p className="mt-3 text-center text-xs text-muted-foreground">
-        Checkout will be connected in a later sprint.
-      </p>
     </aside>
   );
 }

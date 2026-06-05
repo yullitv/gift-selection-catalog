@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,7 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { ROUTES } from "@/constants/routes";
+import { ROUTES, type AuthRedirectState } from "@/constants/routes";
 import { BRAND_SUBMIT_BUTTON_CLASS } from "@/constants/uiClasses";
 import { applyLoginFormErrors, login as loginUser } from "@/lib/auth/authApi";
 import { setAccessToken } from "@/lib/auth/authStorage";
@@ -27,6 +27,10 @@ const defaultValues: LoginFormValues = {
 
 export default function LoginForm() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const redirectTo =
+    (location.state as AuthRedirectState | null)?.from ?? ROUTES.home;
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -41,7 +45,7 @@ export default function LoginForm() {
 
       setAccessToken(res.accessToken);
       notifySuccess("Welcome back!");
-      navigate(ROUTES.home);
+      navigate(redirectTo, { replace: true });
     } catch (error) {
       const toastMessage = applyLoginFormErrors(error, form.setError);
       if (toastMessage) {

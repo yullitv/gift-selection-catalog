@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 
 import { ROUTES } from "@/constants/routes";
 import { clearAccessToken, isAuthenticated } from "@/lib/auth/authStorage";
+import { clearCart } from "@/lib/cart/cartStorage";
 import { notifySuccess } from "@/lib/notify";
 
 export function useAuth() {
@@ -17,6 +18,7 @@ export function useAuth() {
 
   const logout = useCallback(() => {
     clearAccessToken();
+    clearCart();
     notifySuccess("Signed out");
     navigate(ROUTES.login);
   }, [navigate]);

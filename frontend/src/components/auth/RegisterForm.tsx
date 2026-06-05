@@ -1,7 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -13,7 +13,7 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { ROUTES } from "@/constants/routes";
+import { ROUTES, type AuthRedirectState } from "@/constants/routes";
 import { BRAND_SUBMIT_BUTTON_CLASS } from "@/constants/uiClasses";
 import {
   applyRegisterFormErrors,
@@ -36,6 +36,10 @@ const defaultValues: RegisterFormValues = {
 
 export default function RegisterForm() {
   const navigate = useNavigate();
+  const location = useLocation();
+
+  const redirectTo =
+    (location.state as AuthRedirectState | null)?.from ?? ROUTES.home;
 
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
@@ -55,7 +59,7 @@ export default function RegisterForm() {
 
       setAccessToken(res.accessToken);
       notifySuccess("Account created successfully");
-      navigate(ROUTES.login);
+      navigate(redirectTo, { replace: true });
     } catch (error) {
       const toastMessage = applyRegisterFormErrors(error, form.setError);
       if (toastMessage) {
