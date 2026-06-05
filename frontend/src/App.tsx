@@ -1,6 +1,9 @@
 import { Route, Routes } from "react-router-dom";
 
 import SiteLayout from "@/components/layout/SiteLayout";
+import { ROUTES } from "@/constants/routes";
+import AccountPage from "@/pages/AccountPage";
+import AdminAccountPage from "@/pages/AdminAccountPage";
 import ApiSmokeTestPage from "@/pages/ApiSmokeTestPage";
 import CartPage from "@/pages/CartPage";
 import CatalogPage from "@/pages/CatalogPage";
@@ -21,6 +24,8 @@ function App() {
         <Route path="/gift/:id" element={<GiftDetailPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path={ROUTES.account} element={<AccountPage />} />
+        <Route path={ROUTES.adminAccount} element={<AdminAccountPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/order/success" element={<OrderSuccessPage />} />

@@ -13,10 +13,12 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { ROUTES, type AuthRedirectState } from "@/constants/routes";
+import { type AuthRedirectState } from "@/constants/routes";
 import { BRAND_SUBMIT_BUTTON_CLASS } from "@/constants/uiClasses";
 import { applyLoginFormErrors, login as loginUser } from "@/lib/auth/authApi";
-import { setAccessToken } from "@/lib/auth/authStorage";
+import { resolveAuthRedirect } from "@/lib/auth/resolveAuthRedirect";
+import { setAccessToken, setCurrentUser } from "@/lib/auth/authStorage";
+import { reconcileCartAfterLogin } from "@/lib/cart/syncCartToServer";
 import { notifyError, notifySuccess } from "@/lib/notify";
 import { loginSchema, type LoginFormValues } from "@/schemas/loginSchema";
 
@@ -29,8 +31,8 @@ export default function LoginForm() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const redirectTo =
-    (location.state as AuthRedirectState | null)?.from ?? ROUTES.home;
+  const requestedFrom =
+    (location.state as AuthRedirectState | null)?.from ?? null;
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -44,8 +46,18 @@ export default function LoginForm() {
       const res = await loginUser(values);
 
       setAccessToken(res.accessToken);
+      setCurrentUser(res.user);
+
+      if (res.user.role !== "ADMIN") {
+        try {
+          await reconcileCartAfterLogin();
+        } catch {
+          // Cart remains in localStorage if server sync fails.
+        }
+      }
+
       notifySuccess("Welcome back!");
-      navigate(redirectTo, { replace: true });
+      navigate(resolveAuthRedirect(res.user.role, requestedFrom), { replace: true });
     } catch (error) {
       const toastMessage = applyLoginFormErrors(error, form.setError);
       if (toastMessage) {

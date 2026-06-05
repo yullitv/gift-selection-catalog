@@ -1,5 +1,5 @@
+import { Heart, Shield, ShoppingCart, UserRound } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
-import { Heart, ShoppingCart } from "lucide-react";
 
 import HeaderSearch from "@/components/layout/HeaderSearch";
 import { Button } from "@/components/ui/button";
@@ -9,10 +9,13 @@ import { useCart } from "@/hooks/useCart";
 import { cn } from "@/lib/utils";
 
 export default function SiteHeader() {
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, isAdmin } = useAuth();
   const { totals } = useCart();
   const { pathname } = useLocation();
+
   const showHeaderSearch = pathname !== ROUTES.catalog;
+  const showCart = !isAdmin;
+  const showWishlist = isAuthenticated && !isAdmin;
   const cartCount = totals.itemCount;
 
   return (
@@ -45,53 +48,58 @@ export default function SiteHeader() {
         )}
 
         <div className="flex shrink-0 items-center gap-0.5">
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            disabled
-            aria-label="Wishlist — coming soon"
-            title="Coming soon"
-          >
-            <Heart />
-          </Button>
-          <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            asChild
-            className="relative"
-            aria-label={
-              cartCount > 0 ? `Cart, ${cartCount} items` : "Cart"
-            }
-          >
-            <Link to={ROUTES.cart}>
-              <ShoppingCart
-                className={cn(
-                  cartCount > 0 && "text-brand-gold",
+          {showWishlist ? (
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              disabled
+              aria-label="Wishlist - coming soon"
+              title="Coming soon"
+            >
+              <Heart />
+            </Button>
+          ) : null}
+
+          {showCart ? (
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              asChild
+              className="relative"
+              aria-label={cartCount > 0 ? `Cart, ${cartCount} items` : "Cart"}
+            >
+              <Link to={ROUTES.cart}>
+                <ShoppingCart className={cn(cartCount > 0 && "text-brand-gold")} />
+                {cartCount > 0 && (
+                  <span className="absolute -right-0.5 -top-0.5 flex size-4 items-center justify-center rounded-full bg-brand-gold text-[10px] font-semibold text-white">
+                    {cartCount > 9 ? "9+" : cartCount}
+                  </span>
                 )}
-              />
-              {cartCount > 0 && (
-                <span className="absolute -right-0.5 -top-0.5 flex size-4 items-center justify-center rounded-full bg-brand-gold text-[10px] font-semibold text-white">
-                  {cartCount > 9 ? "9+" : cartCount}
-                </span>
-              )}
-            </Link>
-          </Button>
+              </Link>
+            </Button>
+          ) : null}
         </div>
 
         {isAuthenticated ? (
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            className="shrink-0"
-            onClick={logout}
-          >
-            Log out
-          </Button>
+          isAdmin ? (
+            <Button variant="outline" size="sm" asChild className="shrink-0 rounded-xl">
+              <Link to={ROUTES.adminAccount} className="inline-flex items-center gap-1.5">
+                <Shield className="size-4" />
+                Admin
+              </Link>
+            </Button>
+          ) : (
+            <Button variant="outline" size="sm" asChild className="shrink-0 rounded-xl">
+              <Link to={ROUTES.account} className="inline-flex items-center gap-1.5">
+                <UserRound className="size-4" />
+                Account
+              </Link>
+            </Button>
+          )
         ) : (
-          <Button variant="outline" size="sm" asChild className="shrink-0">
+          <Button variant="outline" size="sm" asChild className="shrink-0 rounded-xl">
             <Link to={ROUTES.login}>Log in</Link>
           </Button>
         )}

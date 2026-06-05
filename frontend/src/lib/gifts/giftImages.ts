@@ -1,13 +1,29 @@
 import type { GiftDto } from "@/types/gift";
 
-const FALLBACK_IMAGE = "/favicon.png";
+export const GIFT_FALLBACK_IMAGE = "/favicon.png";
+
+export function resolveGiftImageUrl(url?: string | null): string {
+  const trimmed = url?.trim() ?? "";
+  if (!trimmed) {
+    return GIFT_FALLBACK_IMAGE;
+  }
+
+  if (/^https?:\/\//i.test(trimmed) || trimmed.startsWith("/")) {
+    return trimmed;
+  }
+
+  return GIFT_FALLBACK_IMAGE;
+}
 
 export function getGiftImageUrls(gift: GiftDto): string[] {
-  const fromList = [...new Set(gift.imageUrls.filter(Boolean))];
-  if (fromList.length > 0) return fromList;
+  const fromList = gift.imageUrls
+    .map((url) => resolveGiftImageUrl(url))
+    .filter((url, index, arr) => arr.indexOf(url) === index);
 
-  const single = gift.primaryImageUrl ?? gift.photoUrl;
-  if (single) return [single];
+  if (fromList.length > 0) {
+    return fromList;
+  }
 
-  return [FALLBACK_IMAGE];
+  const single = resolveGiftImageUrl(gift.primaryImageUrl ?? gift.photoUrl);
+  return [single];
 }

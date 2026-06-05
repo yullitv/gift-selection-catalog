@@ -6,3 +6,9 @@ export type UserProfileDto = {
   email: string;
   phone: string | null;
 };
+
+export type UpdateProfileRequest = {
+  firstName: string;
+  lastName: string;
+  phone: string;
+};

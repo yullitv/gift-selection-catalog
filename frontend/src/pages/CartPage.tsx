@@ -1,11 +1,20 @@
+import { Navigate } from "react-router-dom";
+
 import CartEmptyState from "@/components/cart/CartEmptyState";
 import CartItemRow from "@/components/cart/CartItemRow";
 import CartOrderSummary from "@/components/cart/CartOrderSummary";
+import { ROUTES } from "@/constants/routes";
+import { useAuth } from "@/hooks/useAuth";
 import { useCart } from "@/hooks/useCart";
 import { notifySuccess } from "@/lib/notify";
 
 export default function CartPage() {
+  const { isAdmin } = useAuth();
   const { items, totals, setQuantity, removeItem } = useCart();
+
+  if (isAdmin) {
+    return <Navigate to={ROUTES.adminAccount} replace />;
+  }
 
   if (items.length === 0) {
     return (

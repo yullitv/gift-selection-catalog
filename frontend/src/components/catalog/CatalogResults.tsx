@@ -6,6 +6,7 @@ import {
   CATALOG_GRID_CLASS,
   CATALOG_SKELETON_COUNT,
 } from "@/constants/catalog/layout";
+import { useAuth } from "@/hooks/useAuth";
 import { useCart } from "@/hooks/useCart";
 import { notifySuccess } from "@/lib/notify";
 import type { GiftDto } from "@/types/gift";
@@ -29,7 +30,9 @@ export default function CatalogResults({
   showEmpty,
   onLoadMore,
 }: CatalogResultsProps) {
+  const { isAdmin } = useAuth();
   const { addGift, isInCart } = useCart();
+  const showAddToCart = !isAdmin;
 
   function handleAddToCart(gift: GiftDto) {
     const alreadyInCart = isInCart(gift.id);
@@ -68,9 +71,9 @@ export default function CatalogResults({
           <li key={gift.id} className="h-full">
             <GiftCard
               gift={gift}
-              showAddToCart
-              inCart={isInCart(gift.id)}
-              onAddToCart={handleAddToCart}
+              showAddToCart={showAddToCart}
+              inCart={showAddToCart && isInCart(gift.id)}
+              onAddToCart={showAddToCart ? handleAddToCart : undefined}
             />
           </li>
         ))}

@@ -1,6 +1,9 @@
 import { CircleCheck } from "lucide-react";
 import { Link, Navigate, useLocation } from "react-router-dom";
 
+import FlowBackgroundLayout, {
+  ORDER_SUCCESS_FLOW_IMAGE,
+} from "@/components/layout/FlowBackgroundLayout";
 import { Button } from "@/components/ui/button";
 import { ROUTES, type OrderSuccessState } from "@/constants/routes";
 import {
@@ -17,8 +20,14 @@ export default function OrderSuccessPage() {
   }
 
   return (
-    <div className="flex min-h-below-header flex-1 items-center justify-center bg-brand-cream px-4 py-16">
-      <div className={`w-full max-w-md p-8 text-center ${BRAND_PANEL_CLASS}`}>
+    <FlowBackgroundLayout
+      imageSrc={ORDER_SUCCESS_FLOW_IMAGE}
+      className="items-center justify-center"
+      innerClassName="max-lg:min-h-below-header py-8 sm:py-10 lg:h-full lg:justify-center lg:py-5"
+    >
+      <div
+        className={`w-full max-w-md bg-white/95 p-6 text-center sm:p-8 ${BRAND_PANEL_CLASS}`}
+      >
         <div className="mx-auto mb-6 flex size-16 items-center justify-center rounded-full bg-brand-gold/15">
           <CircleCheck
             className="size-10 text-brand-gold"
@@ -42,10 +51,13 @@ export default function OrderSuccessPage() {
           #{orderId}
         </p>
 
-        <Button asChild className={`mt-8 ${BRAND_PRIMARY_BUTTON_FULL_CLASS}`}>
+        <Button
+          asChild
+          className={`mt-8 shadow-md ${BRAND_PRIMARY_BUTTON_FULL_CLASS}`}
+        >
           <Link to={ROUTES.catalog}>Back to Catalog</Link>
         </Button>
       </div>
-    </div>
+    </FlowBackgroundLayout>
   );
 }

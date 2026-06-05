@@ -2,6 +2,7 @@ import { Minus, Plus, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { formatPriceUsd } from "@/lib/format/formatPrice";
+import { resolveGiftImageUrl } from "@/lib/gifts/giftImages";
 import type { CartLineItem } from "@/types/cart";
 
 type CartItemRowProps = {
@@ -16,7 +17,7 @@ export default function CartItemRow({
   onRemove,
 }: CartItemRowProps) {
   const lineTotalCents = item.priceCents * item.quantity;
-  const imageSrc = item.imageUrl ?? "/favicon.png";
+  const imageSrc = resolveGiftImageUrl(item.imageUrl);
 
   return (
     <article className="flex gap-4 rounded-2xl border border-white/60 bg-white/70 p-4 shadow-sm md:gap-6 md:p-5">

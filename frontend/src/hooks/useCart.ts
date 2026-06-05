@@ -8,6 +8,7 @@ import {
   setCartItemQuantity,
 } from "@/lib/cart/cartStorage";
 import { calculateCartTotals } from "@/lib/cart/cartTotals";
+import { resolveGiftImageUrl } from "@/lib/gifts/giftImages";
 import type { CartLineItem } from "@/types/cart";
 import type { GiftDto } from "@/types/gift";
 
@@ -28,7 +29,7 @@ export function useCart() {
         giftId: gift.id,
         name: gift.name,
         priceCents: gift.priceCents,
-        imageUrl: gift.primaryImageUrl ?? gift.photoUrl,
+        imageUrl: resolveGiftImageUrl(gift.primaryImageUrl ?? gift.photoUrl),
       },
       quantity,
     );

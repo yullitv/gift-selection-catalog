@@ -70,3 +70,7 @@ export function removeCartItem(giftId: number): void {
 export function clearCart(): void {
   saveCartItems([]);
 }
+
+export function replaceCartItems(items: CartLineItem[]): void {
+  saveCartItems(items);
+}
