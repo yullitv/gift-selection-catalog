@@ -1,5 +1,5 @@
-import { Link } from "react-router-dom";
 import { MapPin, Phone } from "lucide-react";
+import { Link } from "react-router-dom";
 
 import { FOOTER_COPY } from "@/constants/landing/footerCopy";
 
@@ -34,10 +34,8 @@ function SocialLink({
 export default function SiteFooter() {
   return (
     <footer className="border-t border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
-      {" "}
       <div className="mx-auto max-w-6xl px-4 py-10 md:py-12">
         <div className="flex flex-col items-center gap-8 text-center md:flex-row md:items-start md:justify-between md:text-left">
-          {/* Brand */}
           <div className="flex max-w-xs flex-col items-center gap-3 md:items-start">
             <Link to="/" className="inline-flex items-center gap-2">
               <img
@@ -50,12 +48,11 @@ export default function SiteFooter() {
               </span>
             </Link>
             <p className="text-sm leading-relaxed text-muted-foreground">
-              Curated gifts in Ukraine — find something they&apos;ll actually
+              Curated gifts for every occasion - find something they&apos;ll actually
               remember.
             </p>
           </div>
 
-          {/* Contact */}
           <div className="flex flex-col gap-3 text-sm">
             <p className="font-medium text-foreground">Contact us</p>
 
@@ -79,7 +76,6 @@ export default function SiteFooter() {
             </div>
           </div>
 
-          {/* Social */}
           <div className="flex flex-col items-center gap-3 md:items-end">
             <p className="text-sm font-medium text-foreground">Follow us</p>
             <div className="flex items-center gap-3">

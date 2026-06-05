@@ -1,8 +1,8 @@
 export const FOOTER_COPY = {
-  phone: "+38 (044) 287-45-12",
-  phoneHref: "tel:+380442874512",
-  addressLine1: "Kyiv, Ukraine",
-  addressLine2: "18 Khreshchatyk St., office 4",
+  phone: "+1 (302) 555-0199",
+  phoneHref: "tel:+13025550199",
+  addressLine1: "16192 Coastal Highway",
+  addressLine2: "Lewes, Delaware 19958, USA",
   copyright: `© ${new Date().getFullYear()} GIVHEART. All rights reserved.`,
   social: [
     {

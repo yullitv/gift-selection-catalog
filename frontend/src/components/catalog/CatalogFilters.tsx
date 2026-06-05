@@ -1,11 +1,5 @@
 import { useEffect, useState } from "react";
 
-import {
-  CATALOG_FIELD_CLASS,
-  CATALOG_FILTERS_PANEL_CLASS,
-} from "@/constants/catalog/layout";
-import { CATALOG_SORT_OPTIONS } from "@/constants/catalog/sortOptions";
-import { LANDING_CATEGORIES } from "@/constants/landing/categories";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -16,6 +10,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  CATALOG_FIELD_CLASS,
+  CATALOG_FILTERS_PANEL_CLASS,
+} from "@/constants/catalog/layout";
+import { CATALOG_SORT_OPTIONS } from "@/constants/catalog/sortOptions";
+import { LANDING_CATEGORIES } from "@/constants/landing/categories";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import type { CatalogFiltersState } from "@/lib/catalog/catalogSearchParams";
 import { cn } from "@/lib/utils";

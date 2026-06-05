@@ -1,13 +1,11 @@
 import { Link } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
-
 import { catalogUrl } from "@/lib/catalog/catalogUrl";
 
 export default function HeroSection() {
   return (
     <section className="relative flex min-h-below-header flex-col overflow-hidden">
-      {/* Background image */}
       <img
         src="/images/home/backgrounds/main-home-page-hero-image-givheart.png"
         alt="Person opening a beautifully wrapped gift box"
@@ -15,12 +13,10 @@ export default function HeroSection() {
         fetchPriority="high"
         className="absolute inset-0 h-full w-full object-cover object-[65%_center] md:object-[75%_center]"
       />
-      {/* Dark gradient for text readability (left side) */}
       <div
         className="absolute inset-0 bg-linear-to-r from-black/65 via-black/40 to-black/10"
         aria-hidden
       />
-      {/* Content */}
       <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-1 items-center px-4 py-12 md:py-16">
         <div className="max-w-xl space-y-6">
           <div className="space-y-4">
@@ -41,12 +37,6 @@ export default function HeroSection() {
             <Button size="lg" asChild className="glass-pill px-8">
               <Link to={catalogUrl()}>Find the perfect gift</Link>
             </Button>
-            <Link
-              to="/#categories"
-              className="text-sm font-medium text-white/95 underline-offset-4 transition-colors hover:text-white hover:underline"
-            >
-              See gift ideas by personality →
-            </Link>
           </div>
         </div>
       </div>

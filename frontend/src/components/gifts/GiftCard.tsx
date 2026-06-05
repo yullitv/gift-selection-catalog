@@ -1,4 +1,4 @@
-import { ArrowUpRight } from "lucide-react";
+import { ArrowUpRight, ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
@@ -14,11 +14,23 @@ import type { GiftDto } from "@/types/gift";
 
 type GiftCardProps = {
   gift: GiftDto;
+  showAddToCart?: boolean;
+  inCart?: boolean;
+  onAddToCart?: (gift: GiftDto) => void;
 };
 
-export default function GiftCard({ gift }: GiftCardProps) {
+export default function GiftCard({
+  gift,
+  showAddToCart = false,
+  inCart = false,
+  onAddToCart,
+}: GiftCardProps) {
   const tag = gift.tags[0] ? formatTagLabel(gift.tags[0]) : undefined;
   const imageSrc = gift.primaryImageUrl ?? gift.photoUrl ?? "/favicon.png";
+
+  function handleAddClick() {
+    onAddToCart?.(gift);
+  }
 
   return (
     <Card className="flex h-full flex-col gap-0 overflow-hidden rounded-2xl border border-white/50 bg-white/55 py-0 shadow-lg ring-0 backdrop-blur-md">
@@ -35,7 +47,6 @@ export default function GiftCard({ gift }: GiftCardProps) {
       <CardContent className="flex flex-1 flex-col gap-3 px-4 pb-4 pt-4">
         <div className="flex-1 space-y-1 text-left">
           <CardTitle className="line-clamp-2 min-h-11 text-base font-semibold text-foreground">
-            {" "}
             {gift.name}
           </CardTitle>
           <CardDescription
@@ -45,25 +56,56 @@ export default function GiftCard({ gift }: GiftCardProps) {
           </CardDescription>
         </div>
 
-        <div className="mt-auto flex items-center justify-between gap-2">
-          <p className="text-base font-semibold text-foreground">
-            {formatPriceUsd(gift.priceCents)}
-          </p>
-          <Button
-            variant="outline"
-            size="sm"
-            asChild
-            className="shrink-0 rounded-full border-brand-gold/30 bg-linear-to-r from-brand-gold/20 to-brand-gold/10 px-3 text-foreground hover:bg-brand-gold/25"
-          >
-            <Link
-              to={`/gift/${gift.id}`}
-              className="inline-flex items-center gap-1"
+        <p className="mt-auto text-base font-semibold text-foreground">
+          {formatPriceUsd(gift.priceCents)}
+        </p>
+
+        {showAddToCart ? (
+          <div className="mt-1 grid grid-cols-2 gap-2">
+            <Button
+              type="button"
+              variant={inCart ? "secondary" : "default"}
+              size="sm"
+              onClick={handleAddClick}
+              className="h-9 min-w-0 rounded-full px-3"
             >
-              Choose this
-              <ArrowUpRight className="size-3.5" aria-hidden />
-            </Link>
-          </Button>
-        </div>
+              <ShoppingCart className="mr-1 size-3.5 shrink-0" aria-hidden />
+              <span className="truncate">{inCart ? "In cart" : "Add"}</span>
+            </Button>
+
+            <Button
+              variant="outline"
+              size="sm"
+              asChild
+              className="h-9 min-w-0 rounded-full border-brand-gold/30 bg-linear-to-r from-brand-gold/20 to-brand-gold/10 px-3 text-foreground hover:bg-brand-gold/25"
+            >
+              <Link
+                to={`/gift/${gift.id}`}
+                className="inline-flex min-w-0 items-center justify-center gap-1"
+              >
+                <span className="truncate">Details</span>
+                <ArrowUpRight className="size-3.5 shrink-0" aria-hidden />
+              </Link>
+            </Button>
+          </div>
+        ) : (
+          <div className="mt-1">
+            <Button
+              variant="outline"
+              size="sm"
+              asChild
+              className="h-9 w-full rounded-full border-brand-gold/30 bg-linear-to-r from-brand-gold/20 to-brand-gold/10 px-3 text-foreground hover:bg-brand-gold/25"
+            >
+              <Link
+                to={`/gift/${gift.id}`}
+                className="inline-flex items-center justify-center gap-1"
+              >
+                Choose this
+                <ArrowUpRight className="size-3.5" aria-hidden />
+              </Link>
+            </Button>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

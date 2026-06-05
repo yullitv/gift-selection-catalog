@@ -53,7 +53,7 @@ function parseSort(value: string | null): GiftSort {
   return DEFAULT_CATALOG_SORT;
 }
 
-/** URL об'єкт фільтрів для UI і fetch. */
+/** URL -> об'єкт фільтрів для UI і fetch. */
 export function parseCatalogSearchParams(
   searchParams: URLSearchParams,
 ): CatalogFiltersState {
@@ -72,7 +72,7 @@ export function parseCatalogSearchParams(
   };
 }
 
-/** Фільтри URLSearchParams для setSearchParams. */
+/** Фільтри -> URLSearchParams для setSearchParams. */
 export function buildCatalogSearchParams(
   filters: CatalogFiltersState,
 ): URLSearchParams {
@@ -94,7 +94,7 @@ export function buildCatalogSearchParams(
   return sp;
 }
 
-/** UI-фільтри параметри GET /gifts. */
+/** UI-фільтри -> параметри GET /gifts. */
 export function toFetchGiftsParams(
   filters: CatalogFiltersState,
 ): FetchGiftsParams {
