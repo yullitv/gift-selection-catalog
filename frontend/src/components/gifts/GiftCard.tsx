@@ -1,4 +1,4 @@
-import { ArrowUpRight, ShoppingCart } from "lucide-react";
+import { ArrowUpRight, Heart, Loader2, ShoppingCart, X } from "lucide-react";
 import { Link } from "react-router-dom";
 
 import { Button } from "@/components/ui/button";
@@ -11,6 +11,7 @@ import {
 import { formatPriceUsd } from "@/lib/format/formatPrice";
 import { formatTagLabel } from "@/lib/format/formatTag";
 import { resolveGiftImageUrl } from "@/lib/gifts/giftImages";
+import { cn } from "@/lib/utils";
 import type { GiftDto } from "@/types/gift";
 
 type GiftCardProps = {
@@ -18,6 +19,13 @@ type GiftCardProps = {
   showAddToCart?: boolean;
   inCart?: boolean;
   onAddToCart?: (gift: GiftDto) => void;
+  showWishlist?: boolean;
+  inWishlist?: boolean;
+  wishlistBusy?: boolean;
+  onAddToWishlist?: (gift: GiftDto) => void;
+  showRemove?: boolean;
+  removing?: boolean;
+  onRemove?: () => void;
 };
 
 export default function GiftCard({
@@ -25,12 +33,23 @@ export default function GiftCard({
   showAddToCart = false,
   inCart = false,
   onAddToCart,
+  showWishlist = false,
+  inWishlist = false,
+  wishlistBusy = false,
+  onAddToWishlist,
+  showRemove = false,
+  removing = false,
+  onRemove,
 }: GiftCardProps) {
   const tag = gift.tags[0] ? formatTagLabel(gift.tags[0]) : undefined;
   const imageSrc = resolveGiftImageUrl(gift.primaryImageUrl ?? gift.photoUrl);
 
   function handleAddClick() {
     onAddToCart?.(gift);
+  }
+
+  function handleWishlistClick() {
+    onAddToWishlist?.(gift);
   }
 
   return (
@@ -43,6 +62,48 @@ export default function GiftCard({
           decoding="async"
           className="h-full w-full object-cover"
         />
+
+        {showWishlist ? (
+          <Button
+            type="button"
+            variant="secondary"
+            size="icon-xs"
+            disabled={wishlistBusy}
+            onClick={handleWishlistClick}
+            className="absolute left-2 top-2 size-8 rounded-full bg-white/90 shadow-md hover:bg-white"
+            aria-label={inWishlist ? "Remove from wishlist" : "Add to wishlist"}
+          >
+            {wishlistBusy ? (
+              <Loader2 className="size-4 animate-spin" aria-hidden />
+            ) : (
+              <Heart
+                className={cn(
+                  "size-4",
+                  inWishlist && "fill-brand-gold text-brand-gold",
+                )}
+                aria-hidden
+              />
+            )}
+          </Button>
+        ) : null}
+
+        {showRemove ? (
+          <Button
+            type="button"
+            variant="secondary"
+            size="icon-xs"
+            disabled={removing}
+            onClick={onRemove}
+            className="absolute right-2 top-2 size-8 rounded-full bg-white/90 shadow-md hover:bg-white"
+            aria-label="Remove from wishlist"
+          >
+            {removing ? (
+              <Loader2 className="size-4 animate-spin" aria-hidden />
+            ) : (
+              <X className="size-4" aria-hidden />
+            )}
+          </Button>
+        ) : null}
       </div>
 
       <CardContent className="flex flex-1 flex-col gap-3 px-4 pb-4 pt-4">

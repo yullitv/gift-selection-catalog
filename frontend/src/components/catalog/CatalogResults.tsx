@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import CatalogEmptyState from "@/components/catalog/CatalogEmptyState";
 import GiftCard from "@/components/gifts/GiftCard";
 import GiftCardSkeleton from "@/components/gifts/GiftCardSkeleton";
@@ -8,7 +10,8 @@ import {
 } from "@/constants/catalog/layout";
 import { useAuth } from "@/hooks/useAuth";
 import { useCart } from "@/hooks/useCart";
-import { notifySuccess } from "@/lib/notify";
+import { useWishlist } from "@/hooks/useWishlist";
+import { notifyApiError, notifySuccess } from "@/lib/notify";
 import type { GiftDto } from "@/types/gift";
 
 type CatalogResultsProps = {
@@ -30,14 +33,34 @@ export default function CatalogResults({
   showEmpty,
   onLoadMore,
 }: CatalogResultsProps) {
-  const { isAdmin } = useAuth();
+  const { isAuthenticated, isAdmin } = useAuth();
   const { addGift, isInCart } = useCart();
   const showAddToCart = !isAdmin;
+  const showWishlist = isAuthenticated && !isAdmin;
+  const { isInWishlist, addToWishlist, removeFromWishlist } = useWishlist(showWishlist);
+  const [wishlistBusyId, setWishlistBusyId] = useState<number | null>(null);
 
   function handleAddToCart(gift: GiftDto) {
     const alreadyInCart = isInCart(gift.id);
     addGift(gift, 1);
     notifySuccess(alreadyInCart ? "Already in cart" : "Added to cart");
+  }
+
+  async function handleWishlistToggle(gift: GiftDto) {
+    setWishlistBusyId(gift.id);
+    try {
+      if (isInWishlist(gift.id)) {
+        await removeFromWishlist(gift.id);
+        notifySuccess("Removed from wishlist");
+      } else {
+        await addToWishlist(gift.id);
+        notifySuccess("Added to wishlist");
+      }
+    } catch (error) {
+      notifyApiError(error, "Could not update wishlist");
+    } finally {
+      setWishlistBusyId(null);
+    }
   }
 
   if (loading) {
@@ -74,6 +97,10 @@ export default function CatalogResults({
               showAddToCart={showAddToCart}
               inCart={showAddToCart && isInCart(gift.id)}
               onAddToCart={showAddToCart ? handleAddToCart : undefined}
+              showWishlist={showWishlist}
+              inWishlist={showWishlist && isInWishlist(gift.id)}
+              wishlistBusy={wishlistBusyId === gift.id}
+              onAddToWishlist={showWishlist ? handleWishlistToggle : undefined}
             />
           </li>
         ))}

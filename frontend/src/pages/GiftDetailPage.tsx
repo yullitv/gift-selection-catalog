@@ -1,6 +1,7 @@
-import { useState } from "react";
-import { Heart, ShoppingCart } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Heart, Loader2, ShoppingCart } from "lucide-react";
 import { Link, useParams } from "react-router-dom";
+import { isAxiosError } from "axios";
 
 import GiftImageGallery from "@/components/gift-detail/GiftImageGallery";
 import GiftRecommendations from "@/components/gift-detail/GiftRecommendations";
@@ -19,7 +20,12 @@ import { formatAudienceList } from "@/lib/format/formatAudience";
 import { formatPriceUsd } from "@/lib/format/formatPrice";
 import { formatTagLabel } from "@/lib/format/formatTag";
 import { getGiftImageUrls } from "@/lib/gifts/giftImages";
-import { notifySuccess } from "@/lib/notify";
+import { notifyApiError, notifySuccess } from "@/lib/notify";
+import {
+  addWishlistItem,
+  fetchWishlist,
+  removeWishlistItem,
+} from "@/lib/wishlist/wishlistApi";
 import { cn } from "@/lib/utils";
 import type { GiftDto } from "@/types/gift";
 
@@ -97,9 +103,44 @@ function GiftDetailContent({ giftId }: GiftDetailContentProps) {
   const showWishlistActions = isAuthenticated && !isAdmin;
 
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
-  const [wishlisted, setWishlisted] = useState(false);
+  const [wishlistItemId, setWishlistItemId] = useState<number | null>(null);
+  const [wishlistLoading, setWishlistLoading] = useState(true);
+  const [wishlistBusy, setWishlistBusy] = useState(false);
 
   const inCart = isInCart(giftId);
+  const inWishlist = showWishlistActions && wishlistItemId != null;
+
+  useEffect(() => {
+    if (!showWishlistActions) {
+      return;
+    }
+
+    let cancelled = false;
+
+    async function loadWishlistState() {
+      try {
+        const items = await fetchWishlist();
+        if (!cancelled) {
+          const match = items.find((item) => item.giftId === giftId);
+          setWishlistItemId(match?.id ?? null);
+        }
+      } catch {
+        if (!cancelled) {
+          setWishlistItemId(null);
+        }
+      } finally {
+        if (!cancelled) {
+          setWishlistLoading(false);
+        }
+      }
+    }
+
+    void loadWishlistState();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [giftId, showWishlistActions]);
 
   if (loading) {
     return (
@@ -139,9 +180,33 @@ function GiftDetailContent({ giftId }: GiftDetailContentProps) {
     notifySuccess("Added to cart");
   }
 
-  function handleAddToWishlist() {
-    setWishlisted(true);
-    notifySuccess("Added to wishlist");
+  async function handleWishlistToggle() {
+    setWishlistBusy(true);
+    try {
+      if (inWishlist && wishlistItemId != null) {
+        const next = await removeWishlistItem(wishlistItemId);
+        const stillThere = next.find((item) => item.giftId === giftId);
+        setWishlistItemId(stillThere?.id ?? null);
+        notifySuccess("Removed from wishlist");
+        return;
+      }
+
+      const next = await addWishlistItem({ giftId });
+      const added = next.find((item) => item.giftId === giftId);
+      setWishlistItemId(added?.id ?? null);
+      notifySuccess("Added to wishlist");
+    } catch (err) {
+      if (isAxiosError(err) && err.response?.status === 409) {
+        const items = await fetchWishlist();
+        const match = items.find((item) => item.giftId === giftId);
+        setWishlistItemId(match?.id ?? null);
+        notifySuccess("Already in wishlist");
+        return;
+      }
+      notifyApiError(err, "Could not update wishlist");
+    } finally {
+      setWishlistBusy(false);
+    }
   }
 
   return (
@@ -192,20 +257,25 @@ function GiftDetailContent({ giftId }: GiftDetailContentProps) {
                   <Button
                     type="button"
                     variant="outline"
-                    onClick={handleAddToWishlist}
+                    disabled={wishlistLoading || wishlistBusy}
+                    onClick={() => void handleWishlistToggle()}
                     className={cn(
                       PDP_ACTION_BUTTON_CLASS,
                       "border-border bg-white/80 hover:bg-white",
                     )}
                   >
-                    <Heart
-                      className={cn(
-                        "size-4 shrink-0",
-                        wishlisted && "fill-brand-gold text-brand-gold",
-                      )}
-                      aria-hidden
-                    />
-                    {wishlisted ? "In Wishlist" : "Add to Wishlist"}
+                    {wishlistBusy ? (
+                      <Loader2 className="size-4 shrink-0 animate-spin" aria-hidden />
+                    ) : (
+                      <Heart
+                        className={cn(
+                          "size-4 shrink-0",
+                          inWishlist && "fill-brand-gold text-brand-gold",
+                        )}
+                        aria-hidden
+                      />
+                    )}
+                    {inWishlist ? "In Wishlist" : "Add to Wishlist"}
                   </Button>
                 ) : null}
               </div>

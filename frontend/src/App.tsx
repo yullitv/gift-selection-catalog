@@ -14,6 +14,7 @@ import LoginPage from "@/pages/LoginPage";
 import NotFoundPage from "@/pages/NotFoundPage";
 import OrderSuccessPage from "@/pages/OrderSuccessPage";
 import RegisterPage from "@/pages/RegisterPage";
+import WishlistPage from "@/pages/WishlistPage";
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         <Route path="/gift/:id" element={<GiftDetailPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path={ROUTES.wishlist} element={<WishlistPage />} />
         <Route path={ROUTES.account} element={<AccountPage />} />
         <Route path={ROUTES.adminAccount} element={<AdminAccountPage />} />
         <Route path="/register" element={<RegisterPage />} />

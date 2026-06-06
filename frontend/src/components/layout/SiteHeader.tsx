@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ROUTES } from "@/constants/routes";
 import { useAuth } from "@/hooks/useAuth";
 import { useCart } from "@/hooks/useCart";
+import { useWishlist } from "@/hooks/useWishlist";
 import { cn } from "@/lib/utils";
 
 export default function SiteHeader() {
@@ -17,6 +18,7 @@ export default function SiteHeader() {
   const showCart = !isAdmin;
   const showWishlist = isAuthenticated && !isAdmin;
   const cartCount = totals.itemCount;
+  const { count: wishlistCount } = useWishlist(showWishlist);
 
   return (
     <header className="sticky top-0 z-50 border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80">
@@ -53,11 +55,25 @@ export default function SiteHeader() {
               type="button"
               variant="ghost"
               size="icon"
-              disabled
-              aria-label="Wishlist - coming soon"
-              title="Coming soon"
+              asChild
+              className="relative"
+              aria-label={
+                wishlistCount > 0 ? `Wishlist, ${wishlistCount} items` : "Wishlist"
+              }
             >
-              <Heart />
+              <Link to={ROUTES.wishlist}>
+                <Heart
+                  className={cn(
+                    (pathname === ROUTES.wishlist || wishlistCount > 0) &&
+                      "fill-brand-gold text-brand-gold",
+                  )}
+                />
+                {wishlistCount > 0 ? (
+                  <span className="absolute -right-0.5 -top-0.5 flex size-4 items-center justify-center rounded-full bg-brand-gold text-[10px] font-semibold text-white">
+                    {wishlistCount > 9 ? "9+" : wishlistCount}
+                  </span>
+                ) : null}
+              </Link>
             </Button>
           ) : null}
 

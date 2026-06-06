@@ -4,6 +4,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Set;
+import mate.academy.backend.common.error.NotFoundException;
 import mate.academy.backend.dao.GiftRepository;
 import mate.academy.backend.dao.TagRepository;
 import mate.academy.backend.dto.GiftDto;
@@ -100,7 +101,7 @@ public class GiftService {
 
     @Transactional(readOnly = true)
     public GiftDto getById(Long id) {
-        Gift g = giftRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Gift not found"));
+        Gift g = giftRepository.findById(id).orElseThrow(NotFoundException::gift);
         return giftMapper.toDto(g);
     }
 
@@ -115,7 +116,7 @@ public class GiftService {
 
     @Transactional
     public GiftDto update(Long id, GiftUpsertRequest req) {
-        Gift g = giftRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Gift not found"));
+        Gift g = giftRepository.findById(id).orElseThrow(NotFoundException::gift);
         giftMapper.updateEntity(req, g);
         g.setTargetAudiences(new LinkedHashSet<>(req.targetAudiences()));
         resolveTags(g, req.tags());
