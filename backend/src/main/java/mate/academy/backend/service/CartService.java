@@ -1,5 +1,7 @@
 package mate.academy.backend.service;
 
+import mate.academy.backend.common.error.BadRequestException;
+import mate.academy.backend.common.error.NotFoundException;
 import mate.academy.backend.dao.CartItemRepository;
 import mate.academy.backend.dao.GiftRepository;
 import mate.academy.backend.dao.UserRepository;
@@ -40,7 +42,7 @@ public class CartService {
     @Transactional
     public CartDto addItem(Long userId, AddCartItemRequest request) {
         Gift gift = giftRepository.findById(request.giftId())
-                .orElseThrow(() -> new IllegalArgumentException("Gift not found"));
+                .orElseThrow(NotFoundException::gift);
 
         cartItemRepository.findByUser_IdAndGift_Id(userId, request.giftId())
                 .ifPresentOrElse(
@@ -66,11 +68,11 @@ public class CartService {
     @Transactional
     public CartDto updateItemQuantity(Long userId, Long giftId, UpdateCartItemQuantityRequest request) {
         Gift gift = giftRepository.findById(giftId)
-                .orElseThrow(() -> new IllegalArgumentException("Gift not found"));
+                .orElseThrow(NotFoundException::gift);
         validateStock(gift, request.quantity());
 
         CartItem item = cartItemRepository.findByUser_IdAndGift_Id(userId, giftId)
-                .orElseThrow(() -> new IllegalArgumentException("Cart item not found"));
+                .orElseThrow(() -> new BadRequestException("Cart item not found"));
         item.setQuantity(request.quantity());
 
         return getCart(userId);
@@ -79,7 +81,7 @@ public class CartService {
     @Transactional
     public CartDto removeItem(Long userId, Long giftId) {
         if (cartItemRepository.findByUser_IdAndGift_Id(userId, giftId).isEmpty()) {
-            throw new IllegalArgumentException("Cart item not found");
+            throw new BadRequestException("Cart item not found");
         }
         cartItemRepository.deleteByUser_IdAndGift_Id(userId, giftId);
         return getCart(userId);
@@ -92,10 +94,10 @@ public class CartService {
 
     private void validateStock(Gift gift, int quantity) {
         if (quantity <= 0) {
-            throw new IllegalArgumentException("Quantity must be positive");
+            throw new BadRequestException("Quantity must be greater than zero");
         }
         if (quantity > gift.getStockQuantity()) {
-            throw new IllegalArgumentException("Not enough stock available");
+            throw new BadRequestException("Not enough stock available");
         }
     }
 }

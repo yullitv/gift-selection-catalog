@@ -1,0 +1,6 @@
+# Copy to application-local.properties (gitignored) and activate profile "local", or set env vars.
+# Use when your machine already runs PostgreSQL on port 5432.
+#
+# spring.datasource.url=jdbc:postgresql://localhost:5433/mydatabase
+# spring.datasource.username=myuser
+# spring.datasource.password=secret

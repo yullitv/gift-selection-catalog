@@ -34,6 +34,12 @@ public class User {
     @Column(nullable = false)
     private Role role;
 
+    @Column(length = 32)
+    private String phone;
+
+    @Column(name = "share_token", length = 64, unique = true)
+    private String shareToken;
+
     @Column(name = "created_at", nullable = false)
     private Instant createdAt;
 }
