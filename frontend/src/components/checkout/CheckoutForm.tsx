@@ -71,9 +71,16 @@ export default function CheckoutForm({ prefill, onSuccess }: CheckoutFormProps) 
 
       <Form {...form}>
         <form
-          onSubmit={form.handleSubmit(async () => {
+          onSubmit={form.handleSubmit(async (values) => {
             try {
-              const order = await createOrder();
+              const order = await createOrder({
+                recipientFullName: values.recipientFullName.trim(),
+                recipientPhone: values.recipientPhone.trim(),
+                recipientEmail: values.recipientEmail.trim(),
+                deliveryType: "COURIER",
+                courierAddress: values.courierAddress.trim(),
+                paymentMethod: values.paymentMethod,
+              });
               clearCart();
               onSuccess(order.id);
             } catch (error) {
