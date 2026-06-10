@@ -1,9 +1,10 @@
 import { apiClient } from "@/lib/api";
-import type { OrderDetailsDto, OrderSummaryDto } from "@/types/order";
+import type { CreateOrderRequest, OrderDetailsDto, OrderSummaryDto } from "@/types/order";
 
-/** Backend checkout uses the server cart only (no request body yet). */
-export async function createOrder(): Promise<OrderDetailsDto> {
-  const { data } = await apiClient.post<OrderDetailsDto>("/orders");
+export async function createOrder(
+  payload: CreateOrderRequest,
+): Promise<OrderDetailsDto> {
+  const { data } = await apiClient.post<OrderDetailsDto>("/orders", payload);
   return data;
 }
 
