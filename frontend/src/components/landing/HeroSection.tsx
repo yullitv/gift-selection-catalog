@@ -28,7 +28,7 @@ export default function HeroSection() {
               <span className="block text-brand-gold">actually remember.</span>
             </h1>
             <p className="max-w-lg text-base leading-relaxed text-white/90 md:text-lg">
-              A curated catalog of gifts in Ukraine. From &quot;I have no
+              A curated catalog of gifts in USA. From &quot;I have no
               idea&quot; to &quot;This is perfect&quot; in 3 clicks.
             </p>
           </div>

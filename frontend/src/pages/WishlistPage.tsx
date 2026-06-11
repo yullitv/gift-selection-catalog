@@ -195,7 +195,7 @@ export default function WishlistPage() {
                 ) : (
                   <>
                     <ShoppingCart className="mr-2 size-4" aria-hidden />
-                    Move all to cart
+                    Add all to cart
                   </>
                 )}
               </Button>
